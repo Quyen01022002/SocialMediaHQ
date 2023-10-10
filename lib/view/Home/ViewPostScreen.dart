@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:socialmediahq/component/Item_Commemt.dart';
+import 'package:socialmediahq/model/UserModel.dart';
+
+import '../../service/UserProvider.dart';
 
 
 class ViewPostScreen extends StatefulWidget {
@@ -10,8 +14,12 @@ class ViewPostScreen extends StatefulWidget {
 }
 
 class _ViewPostScreenState extends State<ViewPostScreen> {
+
+
+
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
@@ -65,6 +73,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> {
                                   fit: BoxFit.cover,
                                 )),
                           ),
+
                           Text("Trần Bửu Quyến",style: TextStyle(fontSize: 16,decoration: TextDecoration.none,),),
                         ],
 

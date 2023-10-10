@@ -1,6 +1,9 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:socialmediahq/controller/SignUpController.dart';
 import 'package:socialmediahq/view/authen/Login_screen.dart';
+import 'package:get/get.dart';
 
 
 class SignUpScreeen extends StatefulWidget {
@@ -13,8 +16,7 @@ class SignUpScreeen extends StatefulWidget {
 }
 
 class _SignUpScreeenState extends State<SignUpScreeen> {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final SignUpController myController = Get.put(SignUpController());
   late bool animated;
   bool _isPasswordVisible = false;
 
@@ -24,18 +26,6 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
     animated = widget.animated;
     startAnimation();
   }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _login() {
-    // Thực hiện xác thực và xử lý đăng nhập ở đây
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +73,43 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                 child: Column(
                   children: [
                     TextField(
-                      controller: _usernameController,
+                      controller: myController.textControllerFirstname,
+                      decoration: const InputDecoration(
+                        labelText: 'First Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(50.0),
+                          ),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFF3F5F7),
+                        hintStyle: TextStyle(
+                          color: Colors.grey, // Đặt màu cho hint text
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: myController.textControllerLastname,
+                      decoration: const InputDecoration(
+                        labelText: 'Last Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(50.0),
+                          ),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFF3F5F7),
+                        hintStyle: TextStyle(
+                          color: Colors.grey, // Đặt màu cho hint text
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: myController.textControllerEmail,
                       decoration: const InputDecoration(
                         labelText: 'Username',
                         border: OutlineInputBorder(
@@ -101,7 +127,7 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                     ),
                     const SizedBox(height: 16),
                     TextField(
-                      controller: _passwordController,
+                      controller: myController.textControllerPass,
                       obscureText: _isPasswordVisible,
                       decoration: InputDecoration(
                         labelText: 'Password',
@@ -132,7 +158,7 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                     ),
                     const SizedBox(height: 16),
                     TextField(
-                      controller: _passwordController,
+                      controller: myController.textControllerRePass,
                       obscureText: _isPasswordVisible,
                       decoration: InputDecoration(
                         labelText: 'Password',
@@ -170,7 +196,40 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                         ),
                         backgroundColor: Color(0xFF8587F1),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+
+                        myController.email.value =
+                            myController.textControllerEmail.text;
+                        myController.pass.value =
+                            myController.textControllerPass.text;
+                        myController.firstname.value =
+                            myController.textControllerFirstname.text;
+                        myController.lastname.value =
+                            myController.textControllerFirstname.text;
+                        myController.signup(context);
+                        Future.delayed(Duration(milliseconds: 600), () {
+                          if (myController.stateLogin != null && myController.stateLogin != "") {
+                            Flushbar(
+                              flushbarPosition: FlushbarPosition.TOP,
+                              title: "Đăng Ký",
+                              duration: Duration(seconds: 2),
+                              icon: myController.stateLogin == "Email đã tồn tại"||myController.stateLogin == "Mật khẩu không giống"
+                                  ? Icon(
+                                Icons.close,
+                                size: 30,
+                                color: Colors.red,
+                              )
+                                  : Icon(
+                                Icons.check_circle,
+                                size: 30,
+                                color: Colors.green,
+                              ),
+                              message: myController.stateLogin.toString(),
+                            )..show(context);
+                          }
+                        });
+
+                      },
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(120, 18, 125, 18),
                         child: Text(
