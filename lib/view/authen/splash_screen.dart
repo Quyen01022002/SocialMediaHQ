@@ -123,6 +123,7 @@ class _SplashScreenState extends State<SplashScreen> {
     setState(() {
       animated = true;
     });
+    await Future.delayed(Duration(milliseconds: 1000));
     WidgetsFlutterBinding.ensureInitialized();
     final prefs = await SharedPreferences.getInstance();
     final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;

@@ -41,7 +41,7 @@ class _DashBoardState extends State<DashBoard> {
             context,
             PageTransition(
               type: PageTransitionType.bottomToTop,
-              child: CreatePost(),
+              child: CreatePost(statepost: false,),
             ),
           );
         },

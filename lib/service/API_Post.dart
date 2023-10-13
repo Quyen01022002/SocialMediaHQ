@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:http/http.dart' as http;
+import 'package:socialmediahq/model/InteractionsEnity.dart';
 import 'package:socialmediahq/model/PostEnity.dart';
 import 'package:socialmediahq/model/PostModel.dart';
 
@@ -32,17 +33,10 @@ class API_Post
     final url = Uri.parse('$baseUrl/post');
     final headers = {"Content-Type": "application/json"};
     final Map<String, dynamic> data = {
-      'post': {
         "user_id": post.user_id,
         "content_post": post.content_post,
         "timestamp": post.timestamp?.toIso8601String(),
         "status": post.status
-      },
-      'picture_Of_Post': {
-        "post_id": post.post_id,
-        "link_picture": img,
-
-      }
     };
 
     final response = await http.post(
@@ -51,16 +45,61 @@ class API_Post
       body: jsonEncode(data),
     );
     final responseData = response.body;
+    final postsaved = PostEntity.fromJson(json.decode(responseData));
+    if(postsaved==null)
+      {
+
+      }
+    final url2 = Uri.parse('$baseUrl/postimages');
+    final headers2  = {"Content-Type": "application/json"};
+    final Map<String, dynamic> dataimg = {
+        "link_picture": img,
+        "post_id": postsaved.post_id
+    };
+
+    final response2 = await http.post(
+      url2,
+      headers: headers2,
+      body: jsonEncode(dataimg),
+    );
+    final responseDataimg = response.body;
+    if(responseDataimg.isEmpty)
+      {
+        print("Đăng thất bại");
+      }
+    else
+      {
+        print("Đăng thành công");
+
+      }
+  }
+  static Future<InteractionsEntity?> Liked(int userid,int postid) async {
+    final url = Uri.parse('$baseUrl/like');
+    final headers = {"Content-Type": "application/json"};
+    final Map<String, dynamic> data = {
+      "user_id": userid,
+      "post_id": postid,
+      "liked": true,
+      "timestamp": DateTime.now().toIso8601String()
+    };
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
 
     if (response.statusCode == 200) {
-      final postEnity = PostEntity.fromJson(json.decode(responseData));
-      print('Đăng bài viết thành công');
-      return postEnity;
-    }
-    else {
-      print('Đăng bài viết thất bại: ${response.statusCode}');
+      final responseData = response.body;
+
+      if (responseData.isNotEmpty) {
+        InteractionsEntity listPost = InteractionsEntity.fromJson(json.decode(responseData));
+        return listPost;
+      } else {
+        return null;
+      }
+    } else {
       return null;
     }
   }
-
 }

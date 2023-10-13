@@ -35,6 +35,10 @@ class Post {
   final String content_post;
   final int timestamp;
   final bool status;
+  final String post_source;
+  final int comment_count;
+  final int like_count;
+  final bool user_liked;
 
   Post({
     required this.post_id,
@@ -44,18 +48,27 @@ class Post {
     required this.content_post,
     required this.timestamp,
     required this.status,
+    required this.post_source,
+    required this.comment_count,
+    required this.like_count,
+    required this.user_liked,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      post_id: json['post_id'] ?? 0,
-      first_name: json['first_name'] ?? "",
-      last_name: json['last_name'] ?? "",
-      profile_picture: json['profile_picture'] ?? "",
-      content_post: json['content_post'] ?? "",
-      timestamp: json['timestamp'] ?? 0,
-      status: json['status'] == "true",
+        post_id: json['post_id'] ?? 0,
+        first_name: json['first_name'] ?? "",
+        last_name: json['last_name'] ?? "",
+        profile_picture: json['profile_picture'] ?? "",
+        content_post: json['content_post'] ?? "",
+        timestamp: json['timestamp'] ?? 0,
+        status: json['status'] == "true",
+        post_source: json['post_source'] ?? "",
+        comment_count: json['comment_count'] ?? 0,
+        like_count: json['like_count'] ?? 0,
+        user_liked: json["user_liked"] ?? false,
     );
+
   }
 }
 

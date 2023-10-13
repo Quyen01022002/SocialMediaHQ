@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:page_transition/page_transition.dart';
@@ -57,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeft,
-                                child: ViewPostScreen(),
+                                child: ViewPostScreen( postModel: post,),
                               ),
                             );
                           },

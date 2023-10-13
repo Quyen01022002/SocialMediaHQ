@@ -22,7 +22,7 @@ class PostEntity {
     post_id: data["post_id"] ?? 0,
     user_id: data["user_id"] ?? 0,
     content_post: data["content_post"] ?? "",
-    timestamp: DateTime.tryParse(data["timestamp"] ?? "") ?? DateTime.now(),
+    timestamp: DateTime.fromMillisecondsSinceEpoch(data["timestamp"] ?? 0),
     status: data["status"] ?? "",
   );
 

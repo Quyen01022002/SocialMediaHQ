@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialmediahq/model/InteractionsEnity.dart';
 import 'package:socialmediahq/service/API_Post.dart';
 
 import '../model/PostModel.dart';
@@ -9,6 +10,8 @@ class HomeController extends GetxController {
   static HomeController instance = Get.find();
   RxList<PostModel> listPost = List<PostModel>.empty(growable: true).obs;
   RxBool isloaded = false.obs;
+  RxBool isliked = false.obs;
+  RxInt postid = 0.obs;
 
   void onInit()
   {
@@ -28,6 +31,21 @@ class HomeController extends GetxController {
         listPost.clear();
         listPost.addAll(result);
       }
+    }
+    finally
+    {
+      isloaded(false);
+    }
+  }
+  void Like() async
+  {
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      isliked(true);
+      final userId = prefs.getInt('userId') ?? 0;
+      InteractionsEntity? result = await API_Post.Liked(userId,postid.value);
     }
     finally
     {
