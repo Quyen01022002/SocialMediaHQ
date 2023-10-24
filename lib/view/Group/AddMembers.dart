@@ -1,0 +1,157 @@
+import 'package:flutter/material.dart';
+
+class AddMembersGroup extends StatefulWidget {
+  const AddMembersGroup({Key? key}) : super(key: key);
+
+  @override
+  State<AddMembersGroup> createState() => _AddMembersGroupState();
+}
+
+class User {
+  final String name;
+  final String avatar;
+  bool check;
+
+  User(this.name, this.avatar, this.check);
+}
+
+class _AddMembersGroupState extends State<AddMembersGroup> {
+  final List<User> users = [
+    User('Đỗ Duy Hào', 'assets/images/facebook.png', false),
+    User('Trần Bửu Quyến', 'assets/images/google.png', false),
+    User('Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    User('Đỗ Duy Hào', 'assets/images/facebook.png', false),
+  ];
+
+  List<User> searchResults = [];
+
+  void onSearch(String keyword) {
+    searchResults.clear();
+    if (keyword.isNotEmpty) {
+      for (var user in users) {
+        if (user.name.toLowerCase().contains(keyword.toLowerCase())) {
+          searchResults.add(user);
+        }
+      }
+    }
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SafeArea(
+          child: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  backgroundColor: Color(0xFF8587F1),
+                  title: Text('Thêm thành viên'),
+                ),
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(top: 20, bottom: 20),
+                        child: Text(
+                          'Bạn có thể mời các bạn bè dưới đây: ',
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Tìm kiếm người dùng',
+                          ),
+                          onChanged: (text) {
+                            onSearch(text);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                      bool isChecked = false; // Giá trị `isChecked` riêng lẻ cho mỗi phần tử
+
+                      return Column(
+                        children: [
+                          ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: AssetImage(searchResults.isEmpty
+                                  ? users[index].avatar
+                                  : searchResults[index].avatar),
+                            ),
+                            title: Text(
+                              searchResults.isEmpty
+                                  ? users[index].name
+                                  : searchResults[index].name,
+                            ),
+                            trailing: Checkbox(
+                              value: searchResults.isEmpty
+                                  ? users[index].check
+                                  : searchResults[index].check,
+                              onChanged: (bool? newValue) {
+                                if (newValue != null) {
+                                  setState(() {
+                                    searchResults.isEmpty
+                                        ? users[index].check = newValue
+                                        : searchResults[index].check = newValue;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                        ],
+                      );
+                    },
+                    childCount: searchResults.isEmpty
+                        ? users.length
+                        : searchResults.length,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          left: 20,
+          bottom: 5,
+          right: 20,
+          child: Container(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF8587F1),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: Icon(Icons.add),
+                  ),
+                  Text(
+                    'Mời vào nhóm',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
