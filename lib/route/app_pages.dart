@@ -1,6 +1,7 @@
 
 import 'package:get/get.dart';
 import 'package:socialmediahq/route/app_route.dart';
+
 import 'package:socialmediahq/view/authen/splash_screen.dart';
 
 

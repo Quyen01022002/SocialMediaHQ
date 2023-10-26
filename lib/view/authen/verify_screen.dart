@@ -31,11 +31,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
     _passwordController.dispose();
     super.dispose();
   }
-
-  void _login() {
-    // Thực hiện xác thực và xử lý đăng nhập ở đây
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

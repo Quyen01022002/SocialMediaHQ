@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:socialmediahq/component/Item_Commemt.dart';
+import 'package:socialmediahq/model/UserModel.dart';
+
+import '../../model/PostModel.dart';
+import '../../service/UserProvider.dart';
 
 
 class ViewPostScreen extends StatefulWidget {
-  const ViewPostScreen({Key? key}) : super(key: key);
+  final PostModel postModel;
+  const ViewPostScreen({Key? key, required this.postModel}) : super(key: key);
 
   @override
   State<ViewPostScreen> createState() => _ViewPostScreenState();
 }
 
 class _ViewPostScreenState extends State<ViewPostScreen> {
+
+
+
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
@@ -65,6 +75,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> {
                                   fit: BoxFit.cover,
                                 )),
                           ),
+
                           Text("Trần Bửu Quyến",style: TextStyle(fontSize: 16,decoration: TextDecoration.none,),),
                         ],
 
@@ -76,7 +87,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> {
                       ),
                     ],
                   ),
-                  Image.asset("assets/images/post1.png",),
+                  Image.network(widget.postModel.listImg[0].link_picture),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(26,8,26,8),
                     child: Row(
@@ -92,7 +103,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(2.0),
 
-                                    child: Text("21",style: TextStyle(color: Color(0xFF5252C7),fontSize: 14, decoration: TextDecoration.none,),),
+                                    child: Text(widget.postModel.post.comment_count.toString(),style: TextStyle(color: Color(0xFF5252C7),fontSize: 14, decoration: TextDecoration.none,),),
                                   ),
                                   Icon(Icons.message,color: Color(0xFF5252C7),),
                                 ],
@@ -102,7 +113,7 @@ class _ViewPostScreenState extends State<ViewPostScreen> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(2.0),
-                                  child: Text("150",style: TextStyle(color: Color(0xFF5252C7),fontSize: 14, decoration: TextDecoration.none,),),
+                                  child: Text(widget.postModel.post.like_count.toString(),style: TextStyle(color: Color(0xFF5252C7),fontSize: 14, decoration: TextDecoration.none,),),
                                 ),
                                 Icon(Icons.favorite_border,color:Color(0xFF5252C7)),
                               ],
