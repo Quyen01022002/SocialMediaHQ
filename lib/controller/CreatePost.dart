@@ -10,20 +10,22 @@ import '../view/dashboard/DashBoard.dart';
 
 class CreatePostController extends GetxController {
   final textControllerContent = TextEditingController();
-  RxString imagePath = ('').obs;
+  RxList<String> imagePaths = <String>[].obs;
   final contentpost = RxString('');
 
   void createpost(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('userId') ?? 0;
+
     PostEntity userEnity = PostEntity(
         user_id: userId,
         content_post: textControllerContent.text,
         timestamp: DateTime.now(),
         status: "");
-    final userIsSign = await API_Post.post(userEnity,imagePath.value);
+    final token = prefs.getString('token') ?? "";
+   await API_Post.post(userEnity,imagePaths.value,token);
 
-    Future.delayed(Duration(milliseconds: 200), () {
+    Future.delayed(Duration(milliseconds: 100), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => DashBoard()),

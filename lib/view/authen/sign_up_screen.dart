@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:socialmediahq/controller/SignUpController.dart';
 import 'package:socialmediahq/view/authen/Login_screen.dart';
@@ -8,8 +9,9 @@ import 'package:get/get.dart';
 
 class SignUpScreeen extends StatefulWidget {
   final bool animated;
+  final bool state;
 
-  const SignUpScreeen({Key? key, required this.animated}) : super(key: key);
+  const SignUpScreeen({Key? key, required this.animated,required this.state}) : super(key: key);
 
   @override
   State<SignUpScreeen> createState() => _SignUpScreeenState();
@@ -18,17 +20,19 @@ class SignUpScreeen extends StatefulWidget {
 class _SignUpScreeenState extends State<SignUpScreeen> {
   final SignUpController myController = Get.put(SignUpController());
   late bool animated;
+  late bool state = false;
   bool _isPasswordVisible = false;
 
   @override
   void initState() {
     super.initState();
     animated = widget.animated;
+    state = widget.state;
     startAnimation();
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return state==false?Scaffold(
       body: Stack(
         children: [
           Image.asset(
@@ -73,45 +77,27 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                 child: Column(
                   children: [
                     TextField(
-                      controller: myController.textControllerFirstname,
-                      decoration: const InputDecoration(
-                        labelText: 'First Name',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(50.0),
-                          ),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFF3F5F7),
-                        hintStyle: TextStyle(
-                          color: Colors.grey, // Đặt màu cho hint text
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: myController.textControllerLastname,
-                      decoration: const InputDecoration(
-                        labelText: 'Last Name',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(50.0),
-                          ),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Color(0xFFF3F5F7),
-                        hintStyle: TextStyle(
-                          color: Colors.grey, // Đặt màu cho hint text
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
                       controller: myController.textControllerEmail,
                       decoration: const InputDecoration(
-                        labelText: 'Username',
+                        labelText: 'Email',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(50.0),
+                          ),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Color(0xFFF3F5F7),
+                        hintStyle: TextStyle(
+                          color: Colors.grey, // Đặt màu cho hint text
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: myController.textControllerPhone,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(50.0),
@@ -197,37 +183,17 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                         backgroundColor: Color(0xFF8587F1),
                       ),
                       onPressed: () {
-
+                        setState(() {
+                          state=true;
+                        });
                         myController.email.value =
                             myController.textControllerEmail.text;
                         myController.pass.value =
                             myController.textControllerPass.text;
-                        myController.firstname.value =
-                            myController.textControllerFirstname.text;
-                        myController.lastname.value =
-                            myController.textControllerFirstname.text;
+                        myController.phone.value =
+                            myController.textControllerPass.text;
                         myController.signup(context);
-                        Future.delayed(Duration(milliseconds: 600), () {
-                          if (myController.stateLogin != null && myController.stateLogin != "") {
-                            Flushbar(
-                              flushbarPosition: FlushbarPosition.TOP,
-                              title: "Đăng Ký",
-                              duration: Duration(seconds: 2),
-                              icon: myController.stateLogin == "Email đã tồn tại"||myController.stateLogin == "Mật khẩu không giống"
-                                  ? Icon(
-                                Icons.close,
-                                size: 30,
-                                color: Colors.red,
-                              )
-                                  : Icon(
-                                Icons.check_circle,
-                                size: 30,
-                                color: Colors.green,
-                              ),
-                              message: myController.stateLogin.toString(),
-                            )..show(context);
-                          }
-                        });
+
 
                       },
                       child: Padding(
@@ -274,7 +240,12 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
           ),
         ],
       ),
-    );
+    ):Center(
+      child: SpinKitFoldingCube(
+        color: Colors.blue,
+        size: 50.0,
+      ),
+    );;
   }
 
   Future<void> startAnimation() async {

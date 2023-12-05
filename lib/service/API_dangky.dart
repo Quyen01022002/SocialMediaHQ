@@ -3,26 +3,21 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/service/const.dart';
-class API_dangky
-{
-  static Future<UserEnity?> dangky(UserEnity userEnity) async {
-    final url = Uri.parse('$baseUrl/dangky');
+
+import '../model/AuthenticationResponse.dart';
+
+class API_dangky {
+  static Future<AuthenticationResponse?> DangKy(String email, String password,
+      String phone) async {
+    final url = Uri.parse('$baseUrl/media/register');
+
     final headers = {"Content-Type": "application/json"};
 
 // Tạo một Map chứa dữ liệu người dùng
     final data = {
-      "first_name": userEnity.first_name,
-      "last_name": userEnity.last_name,
-      "email": userEnity.email,
-      "is_email": userEnity.is_email,
-      "phone": userEnity.phone,
-      "is_phone": userEnity.is_phone,
-      "password_hash": userEnity.password_hash,
-      "hash": userEnity.hash,
-      "profile_picture": userEnity.avatarUrl,
-      "is_actived": userEnity.is_actived,
-      "create_at": userEnity.created_at?.toIso8601String(),
-      "update_at":userEnity.updated_at?.toIso8601String()
+      "email": email,
+      "phone": phone,
+      "password": password,
     };
 
     final response = await http.post(
@@ -30,21 +25,70 @@ class API_dangky
       headers: headers,
       body: jsonEncode(data),
     );
-    final responseData = response.body;
 
     if (response.statusCode == 200) {
-      final userEntity = UserEnity.fromJson(json.decode(responseData));
-      print('Đăng ký thành công');
-      return userEntity;
-    }
-    else if(response.statusCode == 400)
-      {
-        print('Email trùng');
+      final responseData = response.body;
+
+      if (responseData.isNotEmpty) {
+        final AuthenticationResponse2 = AuthenticationResponse.fromJson(
+            json.decode(responseData));
+        return AuthenticationResponse2;
+      } else {
         return null;
       }
-    else {
-      print('Đăng ký thất bại: ${response.statusCode}');
+    } else {
       return null;
     }
   }
+
+  static Future<String> OTP(String email) async {
+    final url = Uri.parse('$baseUrl/media/sendEmail?email=$email');
+    final response = await http.get(
+      url,
+
+    );
+    if (response.statusCode == 200) {
+      final responseData = response.body;
+
+      if (responseData.isNotEmpty) {
+        final String OTP = json.decode(responseData).toString();
+        return OTP;
+      } else {
+        return "Fail";
+      }
+    } else {
+      return "Fail";
+    }
+  }
+
+  static Future<String?> UpdateFisrt(String token,String firstName,String lastName,String Address,String date,String gender,int id) async {
+    final url = Uri.parse('$baseUrl/user/$id');
+
+    final headers = {
+    "Content-Type": "application/json",
+    'Authorization': 'Bearer $token',};
+
+// Tạo một Map chứa dữ liệu người dùng
+    final data = {
+    "firstName":firstName,
+    "lastName":lastName,
+    "address": Address,
+    "DoB": date,
+    "gender": gender,
+
+    };
+
+    final response = await http.put(
+    url,
+    headers: headers,
+    body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+
+    return "Success";
+    } else {
+    return null;
+    }
+    }
   }

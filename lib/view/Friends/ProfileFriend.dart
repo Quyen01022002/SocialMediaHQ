@@ -1,32 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:socialmediahq/controller/ProfileController.dart';
-import 'package:socialmediahq/model/UsersProfile.dart';
-import 'package:socialmediahq/view/Settings/chooseimage.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileFriend extends StatefulWidget {
+  const ProfileFriend({Key? key}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileFriend> createState() => _ProfileFriendState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
+class _ProfileFriendState extends State<ProfileFriend>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  ProfileController profileController = Get.put(ProfileController());
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
-     _loadData();
     _tabController = TabController(length: 2, vsync: this);
-  }
-  void _loadData() async {
-    // Công việc bất đồng bộ ở đây
-    await profileController.loadthongtin;
-
   }
 
   @override
@@ -59,50 +47,40 @@ class _ProfileScreenState extends State<ProfileScreen>
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(50)),
-                          child: GestureDetector(
-                            onTap: ()
-                            {
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.bottomToTop,
-                                  child: ChooseImage(),
-                                ),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  "assets/images/backgourd.png",
-                                  width: 90,
-                                  height: 90,
-                                  fit: BoxFit.cover,
-                                ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: ClipOval(
+                              child: Image.asset(
+                                "assets/images/backgourd.png",
+                                width: 90,
+                                height: 90,
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
                         )),
                     Padding(
-                      padding: const EdgeInsets.only(top: 12.0),
+                      padding: const EdgeInsets.only(top:12.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 26.0),
-                            child: Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.white,
-                            ),
+                            child: Icon(Icons.arrow_back_ios,color: Colors.white,),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 70),
-                            child: Text(
-                              "Trang cá nhân",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 18),
-                            ),
+                          Text(
+                            "Trang cá nhân",
+                            style: TextStyle(
+                                color: Colors.white,
+                                decoration: TextDecoration.none,
+                                fontSize: 18),
+                          ),
+                          Container(
+                          margin: EdgeInsets.only(right: 20),
+                            decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(20)),
+                            child: Padding(
+                                padding: EdgeInsets.fromLTRB(16,8,16,8),
+                                child: Text("follow",style: TextStyle(color: Colors.blue),)),
                           ),
                         ],
                       ),
@@ -114,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 height: 16,
               ),
               Text(
-                profileController.fisrt_name.toString()+profileController.last_name.toString(),
+                "Trần Bửu Quyến",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -146,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Column(
                           children: [
                             Text(
-                              profileController.post.toString(),
+                              "120",
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                             Text("Post")
@@ -155,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Column(
                           children: [
                             Text(
-                              profileController.follow.toString(),
+                              "120",
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                             Text("Follower")
@@ -164,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Column(
                           children: [
                             Text(
-                              profileController.following.toString(),
+                              "120",
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                             Text("Following")
@@ -175,6 +153,69 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                 ),
               ),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                  child: Icon(
+                                    Icons.people_alt_outlined,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const Text(
+                                  "Thêm Bạn Bè",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 8, 16, 8),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Color(0xFFF1F1FE),
+                              borderRadius: BorderRadius.circular(50)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                  child: Icon(
+                                    Icons.messenger_sharp,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -183,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   child: TabBar(
                     controller: _tabController,
                     tabs: [
-                      _buildTab(profileController.post.toString()+' Bài Viết'),
+                      _buildTab('10 Bài Viết'),
                       _buildTab('0 Bạn bè'),
                     ],
                     indicator: BoxDecoration(
