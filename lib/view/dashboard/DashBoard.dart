@@ -30,6 +30,7 @@ class _DashBoardState extends State<DashBoard> {
     Widget currentScreen = screens[currentTab];
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: PageStorage(
         child: currentScreen,
         bucket: buket,
@@ -65,7 +66,7 @@ class _DashBoardState extends State<DashBoard> {
                           setState(() {
 
                             currentTab = 0;
-                            currentScreen = screens[currentTab];
+                            currentScreen = HomeScreen();
                           });
                         },
                         child:Column(

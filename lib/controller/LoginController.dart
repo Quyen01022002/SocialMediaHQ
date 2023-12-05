@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialmediahq/model/AuthenticationResponse.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/service/API_login.dart';
 
@@ -16,10 +17,10 @@ class LoginController extends GetxController
     final email = textControllerEmail.text;
     final password = textControllerPass.text;
 
-    final userEntity = await API_login.Login(email, password);
+    final AuthenticationResponse = await API_login.Login(email, password);
 
-    if (userEntity != null) {
-      await saveLoggedInState(userEntity);
+    if (AuthenticationResponse != null) {
+      await saveLoggedInState(AuthenticationResponse);
      stateLogin.value ="Đăng nhập thành công";
       Future.delayed(Duration(milliseconds: 500), () {
         Navigator.pushReplacement(
@@ -33,14 +34,12 @@ class LoginController extends GetxController
       stateLogin.value = 'Đăng nhập thất bại';
     }
   }
-  Future<void> saveLoggedInState(UserEnity user) async {
+  Future<void> saveLoggedInState(AuthenticationResponse user) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', true);
-    prefs.setInt('userId', user.user_id!);
-    prefs.setString("first_name", user.first_name!);
-    prefs.setString("last_name", user.last_name!);
+    prefs.setInt('id', user.id!);
     prefs.setString("email", user.email!);
-    prefs.setString("avatar", user.avatarUrl!);
+    prefs.setString("token", user.token!);
 
   }
   static Future<void> Logout() async {

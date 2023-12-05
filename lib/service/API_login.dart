@@ -4,20 +4,34 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/service/const.dart';
+
+import '../model/AuthenticationResponse.dart';
 class API_login
 {
 
-  static Future<UserEnity?> Login(String email, String password) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/login?email=$email&password_hash=$password'),
+  static Future<AuthenticationResponse?> Login(String email, String password) async {
+    final url = Uri.parse('$baseUrl/media/authenticate');
+
+    final headers = {"Content-Type": "application/json"};
+
+// Tạo một Map chứa dữ liệu người dùng
+    final data = {
+      "email":email,
+      "password": password,
+    };
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
     );
 
     if (response.statusCode == 200) {
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
-        final userEntity = UserEnity.fromJson(json.decode(responseData));
-        return userEntity;
+        final AuthenticationResponse2 = AuthenticationResponse.fromJson(json.decode(responseData));
+        return AuthenticationResponse2;
       } else {
         return null;
       }

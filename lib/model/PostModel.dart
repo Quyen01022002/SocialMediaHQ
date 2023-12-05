@@ -6,88 +6,91 @@ List<PostModel> postModelListFromJson(String jsonString) {
 }
 
 class PostModel {
-  final Post post;
-  final List<Picture> listImg;
+  final int id;
+  final String contentPost;
+  final String timeStamp;
+  final bool status;
+  final int comment_count;
+  final int like_count;
+  final bool user_liked;
+  final List<Picture> listAnh;
+  final CreateBy createBy;
 
   PostModel({
-    required this.post,
-    required this.listImg,
+    required this.id,
+    required this.contentPost,
+    required this.timeStamp,
+    required this.status,
+    required this.comment_count,
+    required this.like_count,
+    required this.user_liked,
+    required this.createBy,
+    required this.listAnh,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    final post = Post.fromJson(json['post']);
-    final listImg = (json['listImg'] as List)
+    final createBy = CreateBy.fromJson(json['createBy']);
+    final listImg = (json['listAnh'] as List)
         .map((item) => Picture.fromJson(item))
         .toList();
 
     return PostModel(
-      post: post,
-      listImg: listImg,
-    );
-  }
-}
-
-class Post {
-  final int post_id;
-  final String first_name;
-  final String last_name;
-  final String profile_picture;
-  final String content_post;
-  final int timestamp;
-  final bool status;
-  final String post_source;
-  final int comment_count;
-  final int like_count;
-  final bool user_liked;
-
-  Post({
-    required this.post_id,
-    required this.first_name,
-    required this.last_name,
-    required this.profile_picture,
-    required this.content_post,
-    required this.timestamp,
-    required this.status,
-    required this.post_source,
-    required this.comment_count,
-    required this.like_count,
-    required this.user_liked,
-  });
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-        post_id: json['post_id'] ?? 0,
-        first_name: json['first_name'] ?? "",
-        last_name: json['last_name'] ?? "",
-        profile_picture: json['profile_picture'] ?? "",
-        content_post: json['content_post'] ?? "",
-        timestamp: json['timestamp'] ?? 0,
+        id: json['id'] ?? 0,
+        contentPost: json['contentPost'] ?? "",
+        timeStamp: json['timeStamp'] ?? "",
         status: json['status'] == "true",
-        post_source: json['post_source'] ?? "",
         comment_count: json['comment_count'] ?? 0,
         like_count: json['like_count'] ?? 0,
         user_liked: json["user_liked"] ?? false,
+        listAnh: listImg,
+        createBy: createBy
     );
-
   }
 }
 
+class CreateBy {
+final int id;
+final String firstName;
+final String lastName;
+final String phone;
+final String email;
+final String profilePicture;
+
+CreateBy({
+required this.id,
+required this.firstName,
+required this.lastName,
+required this.phone,
+required this.email,
+required this.profilePicture,
+});
+
+factory CreateBy.fromJson(Map<String, dynamic> json) {
+return CreateBy(
+id: json['id'] ?? 0,
+firstName: json['firstName'] ?? "",
+lastName: json['lastName'] ?? "",
+phone: json['phone'] ?? "" ,
+email: json['email'] ?? "",
+profilePicture: json['profilePicture'] ?? "",
+);
+
+}
+}
+
 class Picture {
-  final int pic_id;
-  final int post_id;
-  final String link_picture;
+final int id;
+final String link_picture;
 
-  Picture({
-    required this.pic_id,
-    required this.post_id,
-    required this.link_picture,
-  });
+Picture({
+required this.id,
+required this.link_picture,
+});
 
-  factory Picture.fromJson(Map<String, dynamic> json) {
-    return Picture(
-      pic_id: json['pic_id'] ?? 0,
-      post_id: json['post_id'] ?? 0,
-      link_picture: json['link_picture'] ?? "",
-    );
-  }
+factory Picture.fromJson(Map<String, dynamic> json) {
+return Picture(
+id: json['id'] ?? 0,
+link_picture: json['linkPicture'] ?? "",
+);
+}
 }

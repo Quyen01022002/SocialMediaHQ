@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:socialmediahq/controller/HomeController.dart';
 import 'package:socialmediahq/model/PostModel.dart';
+import 'package:socialmediahq/view/Comments/CommentHome.dart';
+
+import '../../view/Comments/ContentComments.dart';
+
 
 class Home_Post extends StatefulWidget {
   final PostModel postModel;
@@ -12,22 +17,24 @@ class Home_Post extends StatefulWidget {
 }
 
 class _Home_PostState extends State<Home_Post> {
-  late bool statelike;
+  late bool statelike=true;
 
-  HomeController home_postcontroller=new HomeController();
-   @override
-   void initState() {
-     super.initState();
-     statelike = widget.postModel.post.user_liked;
-   }
+  HomeController home_postcontroller = new HomeController();
+
+  @override
+  void initState() {
+    super.initState();
+    statelike = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onDoubleTap: (){
+      onDoubleTap: () {
         setState(() {
-          statelike=!statelike;
+          statelike = !statelike;
         });
-        home_postcontroller.postid.value=widget.postModel.post.post_id;
+        home_postcontroller.postid.value = widget.postModel.id;
         home_postcontroller.Like();
         print("Like");
       },
@@ -53,42 +60,74 @@ class _Home_PostState extends State<Home_Post> {
                         fit: BoxFit.cover,
                       )),
                     ),
-                    Text(
-                      widget.postModel.post.first_name,
-                      style: TextStyle(fontSize: 16),
+                    Column(
+                      children: [
+                        Text(
+                          widget.postModel.createBy.firstName,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          "1 giờ",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFFCECECE),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Text(
-                    "1 giờ",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFFCECECE),
-                    ),
+                GestureDetector(
+                  onTap: (){
+
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Icon(Icons.more_horiz),
                   ),
                 ),
               ],
             ),
-            widget.postModel.listImg.isEmpty
+            widget.postModel.listAnh.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.only(left: 25),
-                    child: Text(widget.postModel.post.content_post),
+                    child:ExpandableTextWidget(
+                      text:
+                      widget.postModel.contentPost.toString(),
+                      maxLines: 3,
+                    ),
                   )
-                : FutureBuilder(
-                    future: loadImages(widget.postModel.listImg[0].link_picture),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else {
-                          return Center(child: Image.network(snapshot.data!));
-                        }
-                      } else {
-                        return buildPlaceholder();
-                      }
-                    },
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25),
+                        child: ExpandableTextWidget(
+                          text: widget.postModel.contentPost.toString(),
+                          maxLines: 3,
+                        ),
+                      ),
+                      Container(
+                        height: 500,
+                        decoration: BoxDecoration(color: Colors.grey),
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: widget.postModel.listAnh.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.network(
+                                widget.postModel.listAnh[index].link_picture,
+
+
+                                fit: BoxFit.cover, // Để ảnh nằm đúng trong phạm vi của nó
+                              ),
+                            );
+                          },
+                        ),
+                      )
+
+                    ],
                   ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -96,27 +135,41 @@ class _Home_PostState extends State<Home_Post> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Icon(
-                    Icons.add_circle_outline,
+                    Icons.turned_in_not_outlined,
                     color: Color(0xFF5252C7),
                   ),
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Text(
-                                widget.postModel.post.comment_count.toString(),
-                                style: TextStyle(color: Color(0xFF5252C7)),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.bottomToTop,
+                              child: CommentHome(
+                                postEntity: widget.postModel,
                               ),
                             ),
-                            Icon(
-                              Icons.message,
-                              color: Color(0xFF5252C7),
-                            ),
-                          ],
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Text(
+                                  widget.postModel.comment_count
+                                      .toString(),
+                                  style: TextStyle(color: Color(0xFF5252C7)),
+                                ),
+                              ),
+                              Icon(
+                                Icons.mode_comment_outlined,
+                                color: Color(0xFF5252C7),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Row(
@@ -124,22 +177,24 @@ class _Home_PostState extends State<Home_Post> {
                           Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: Text(
-                              widget.postModel.post.like_count.toString(),
+                              statelike?(widget.postModel.like_count).toString():(widget.postModel.like_count-1).toString(),
                               style: TextStyle(color: Color(0xFF5252C7)),
                             ),
                           ),
                           GestureDetector(
-                            onTap:(){
-                              setState(() {
-                                statelike=!statelike;
-                              });
-                              home_postcontroller.postid.value=widget.postModel.post.post_id;
-                              home_postcontroller.Like();
-                              print("Like");
-                            },
-                              child:statelike==false?Icon(Icons.favorite_border,
-                              color: Color(0xFF5252C7)):Icon(Icons.favorite,
-                                  color: Colors.red)),
+                              onTap: () {
+                                setState(() {
+                                  statelike = !statelike;
+                                });
+                                home_postcontroller.postid.value =
+                                    widget.postModel.id;
+                                home_postcontroller.Like();
+                                print("Like");
+                              },
+                              child: widget.postModel.user_liked == false
+                                  ? Icon(Icons.favorite_border,
+                                      color: Color(0xFF5252C7))
+                                  : Icon(Icons.favorite, color: Colors.red)),
                         ],
                       ),
                     ],
@@ -151,21 +206,5 @@ class _Home_PostState extends State<Home_Post> {
         ),
       ),
     );
-  }
-}
-
-Widget buildPlaceholder() {
-  return Container(
-    width: double.infinity,
-    height: 200,
-    color: Colors.grey,
-  );
-}
-
-Future<String> loadImages(String images) async {
-  if (images.isNotEmpty) {
-    return images;
-  } else {
-    return 'Đường dẫn mặc định hoặc ảnh không có';
   }
 }

@@ -6,15 +6,15 @@ import 'package:socialmediahq/component/Home_Header.dart';
 import '../../component/Friends_InviteItem.dart';
 import '../../controller/FriendsController.dart';
 
-class WatchScreen extends StatefulWidget {
-  const WatchScreen({Key? key}) : super(key: key);
+class FriendList extends StatefulWidget {
+  const FriendList({Key? key}) : super(key: key);
 
   @override
-  State<WatchScreen> createState() => _WatchScreenState();
+  State<FriendList> createState() => _WatchScreenState();
 }
 
-class _WatchScreenState extends State<WatchScreen> {
-  final FriendController myController = Get.put(FriendController());
+class _WatchScreenState extends State<FriendList> {
+  final FriendController myController = Get.find();
   @override
   void initState() {
     super.initState();
@@ -40,7 +40,7 @@ class _WatchScreenState extends State<WatchScreen> {
                       padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                       child: RichText(
                         text: TextSpan(
-                          text: "Lời mời kết bạn",
+                          text: "Bạn bè",
                           style: TextStyle(color: Colors.black, fontSize: 20),
                           children: <TextSpan>[
                             TextSpan(

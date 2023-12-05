@@ -1,14 +1,18 @@
+import 'dart:async';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:socialmediahq/component/Item_Commemt.dart';
-import 'package:socialmediahq/model/UserModel.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialmediahq/model/PostModel.dart';
 
-import '../../model/PostModel.dart';
-import '../../service/UserProvider.dart';
-
+import '../../controller/CommentController.dart';
+import '../../model/CommentsEnity.dart';
+import '../Comments/CommentItems.dart';
 
 class ViewPostScreen extends StatefulWidget {
   final PostModel postModel;
+
   const ViewPostScreen({Key? key, required this.postModel}) : super(key: key);
 
   @override
@@ -16,114 +20,119 @@ class ViewPostScreen extends StatefulWidget {
 }
 
 class _ViewPostScreenState extends State<ViewPostScreen> {
+  late bool statecommentsview = false;
+  late bool statecontent = false;
+  final List<CommentEntity> comments = [];
+  late int postid = widget.postModel.id;
+  final CommentController myController = Get.put(CommentController());
 
-
+  @override
+  void initState() {
+    super.initState();
+    FirebaseDatabase.instance
+        .reference()
+        .child('posts/$postid/comments')
+        .onChildAdded
+        .listen((event) {
+      final commentData = event.snapshot.value as Map;
+      final newComment = CommentEntity(
+        content_post: commentData['content'],
+        timestamp: commentData['timestamp'],
+        user_id: commentData['user_id'],
+        avatar: commentData['avatar'],
+        first_name: commentData['firstName'],
+        last_name: commentData['lastName'],
+      );
+      setState(() {
+        comments.add(newComment);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
-      child: Container(
-        decoration: BoxDecoration(color: Colors.white),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16,0,16,0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.arrow_back),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.favorite_border),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.add_circle_outline),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.share),
-                      ),
-                    ],
-                  ),
-                ],
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              expandedHeight: 500.0,
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Row(
+                  children: <Widget>[
+                    SizedBox(width: 26),
+
+                    Text('Bình Luận',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,),
+                  ],
+                ),
+
+                background: Image.network(
+                  widget.postModel.listAnh[0].link_picture,
+                  fit: BoxFit.cover,
+                ),
+
+                titlePadding: EdgeInsets.only(left: 20, bottom: 20),
+
+              ),
+
+            ),
+            SliverToBoxAdapter(
+              child: Text("Nội dung bài viết"), // Thêm phần tử vào đầu danh sách
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                  final comment = comments[index];
+
+                  return CommentItems(commentEntity: comment);
+                },
+                childCount: comments.length,
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20)
-              ),
+
+            SliverToBoxAdapter(
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ClipOval(
-                                child: Image.asset(
-                                  "assets/images/backgourd.png",
-                                  width: 40,
-                                  height: 40,
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-
-                          Text("Trần Bửu Quyến",style: TextStyle(fontSize: 16,decoration: TextDecoration.none,),),
-                        ],
-
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: Text("1 giờ",style: TextStyle(fontSize: 16,color: Color(0xFFCECECE),),),
-                      ),
-                    ],
-                  ),
-                  Image.network(widget.postModel.listImg[0].link_picture),
+                  Divider(height: 1),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(26,8,26,8),
+                    padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.add_circle_outline,color: Color(0xFF5252C7),),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 20.0),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(2.0),
-
-                                    child: Text(widget.postModel.post.comment_count.toString(),style: TextStyle(color: Color(0xFF5252C7),fontSize: 14, decoration: TextDecoration.none,),),
-                                  ),
-                                  Icon(Icons.message,color: Color(0xFF5252C7),),
-                                ],
-                              ),
+                        Expanded(
+                          child: TextField(
+                            controller: myController.textControllerContent,
+                            onChanged: (text) {
+                              setState(() {
+                                statecontent = text != null && text.isNotEmpty;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Thêm bình luận...',
+                              border: InputBorder.none,
                             ),
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Text(widget.postModel.post.like_count.toString(),style: TextStyle(color: Color(0xFF5252C7),fontSize: 14, decoration: TextDecoration.none,),),
-                                ),
-                                Icon(Icons.favorite_border,color:Color(0xFF5252C7)),
-                              ],
-                            ),
-                          ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: statecontent
+                              ? () async {
+                            final String content =
+                            myController.textControllerContent.text.toString();
+                            addCommentToPost(postid, content);
+                            myController.addcomments(context, postid);
+                          }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            primary: statecontent ? Colors.blue : Colors.grey,
+                          ),
+                          child: Text("Đăng"),
                         ),
                       ],
                     ),
                   ),
-                  ItemComment(),
                 ],
               ),
             ),
@@ -133,4 +142,53 @@ class _ViewPostScreenState extends State<ViewPostScreen> {
       ),
     );
   }
+}
+
+Future<void> addCommentToPost(int postID, String commentText) async {
+  final prefs = await SharedPreferences.getInstance();
+  final userId = prefs.getInt('userId') ?? 0;
+  final avatar = prefs.getString('avatar') ?? "";
+  final firstName = prefs.getString('first_name') ?? "";
+  final lastName = prefs.getString('last_name') ?? "";
+  final reference =
+  FirebaseDatabase.instance.reference().child('posts/$postID/comments');
+  reference.push().set({
+    'content': commentText,
+    'timestamp': ServerValue.timestamp,
+    'user_id': userId,
+    'avatar': avatar,
+    "firstName": firstName,
+    "lastName": lastName,
+
+  });
+}
+
+Future<List<CommentEntity>> getCommentsForPost(int postID) async {
+  final reference = FirebaseDatabase.instance.reference().child(
+      'posts/$postID/comments');
+  final completer = Completer<List<CommentEntity>>();
+
+  reference.onValue.listen((event) {
+    final DataSnapshot snapshot = event.snapshot;
+    final comments = <CommentEntity>[];
+
+    if (snapshot.value != null && snapshot.value is Map) {
+      final commentsMap = Map<String, dynamic>.from(snapshot.value as Map);
+      commentsMap.forEach((commentKey, commentData) {
+        comments.add(CommentEntity(
+          content_post: commentData['content'],
+          timestamp: commentData['timestamp'],
+          user_id: commentData['user_id'],
+          avatar: commentData['avatar'],
+          first_name: commentData['firstName'],
+          last_name: commentData['lastName'],
+        ));
+      });
+    }
+
+
+    completer.complete(comments);
+  });
+
+  return completer.future;
 }

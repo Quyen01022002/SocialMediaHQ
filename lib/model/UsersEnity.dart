@@ -17,6 +17,8 @@ class UserEnity {
   final bool? is_actived;
   final DateTime? created_at;
   final DateTime? updated_at;
+  final int? countFriend;
+  final int? idFriends;
 
   UserEnity({
     this.user_id,
@@ -32,23 +34,27 @@ class UserEnity {
     this.is_actived,
     this.created_at,
     this.updated_at,
+    this.countFriend,
+    this.idFriends,
   });
 
   factory UserEnity.fromJson(Map<String, dynamic> data) => UserEnity(
-        user_id: data.containsKey("user_ID") ? data["user_ID"] : 0,
-        first_name: data["first_name"] ?? "",
-        last_name: data["last_name"] ?? "",
+        user_id: data.containsKey("id") ? data["id"] : 0,
+        first_name: data["firstName"] ?? "",
+        last_name: data["lastName"] ?? "",
         email: data["email"] ?? "",
-        is_email: data["is_email"] ?? false,
+        is_email: data["isEmail"] ?? false,
         phone: data["phone"] ?? "",
-        is_phone: data["is_phone"] ?? false,
-        password_hash: data["password_hash"] ?? "",
+        is_phone: data["isPhone"] ?? false,
         hash: data["hash"] ?? "",
-        avatarUrl: data["avatarUrl"] ?? "",
-        is_actived: data["is_actived"] ?? false,
+        avatarUrl: data["profilePicture"] ?? "",
+        is_actived: data["isActived"] ?? false,
         created_at:
-            DateTime.tryParse(data["created_at"] ?? "") ?? DateTime.now(),
+            DateTime.tryParse(data["createdAt"] ?? "") ?? DateTime.now(),
         updated_at:
-            DateTime.tryParse(data["updated_at"] ?? "") ?? DateTime.now(),
-      );
+            DateTime.tryParse(data["updatedAt"] ?? "") ?? DateTime.now(),
+    countFriend: data.containsKey("countFriend") ? data["countFriend"] : 0,
+    idFriends: data.containsKey("idFriends") ? data["idFriends"] : 0,
+
+  );
 }
