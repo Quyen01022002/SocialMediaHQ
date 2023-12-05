@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:socialmediahq/component/Friends_Item.dart';
+
+import '../view/Friends/friendList.dart';
 
 class FriendHeader extends StatelessWidget {
   const FriendHeader({Key? key}) : super(key: key);
@@ -24,11 +28,23 @@ class FriendHeader extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Bạn bè",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeft,
+                          child: FriendList(),
+                        ),
+                      );
+                    },
+                    child:
+                    Text(
+                      "Bạn bè",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

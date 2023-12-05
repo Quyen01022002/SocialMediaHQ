@@ -4,16 +4,16 @@ import 'package:socialmediahq/model/UsersEnity.dart';
 
 import '../controller/FriendsController.dart';
 
-class ItemInvite extends StatefulWidget {
+class ItemFriend extends StatefulWidget {
   final UserEnity friends;
-  const ItemInvite({Key? key,required this.friends}) : super(key: key);
+  const ItemFriend({Key? key,required this.friends}) : super(key: key);
 
   @override
-  State<ItemInvite> createState() => _ItemInviteState();
+  State<ItemFriend> createState() => _ItemInviteState();
 }
 
-class _ItemInviteState extends State<ItemInvite> {
-  final FriendController myController = Get.put(FriendController());
+class _ItemInviteState extends State<ItemFriend> {
+  final FriendController myController = Get.find();
 
   late bool stateAccept=true;
   late bool stateUnfriends=true;
@@ -65,36 +65,6 @@ class _ItemInviteState extends State<ItemInvite> {
                   ],
                 ),
                 const SizedBox(height: 6,),
-                stateAccept&&stateUnfriends?Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 28.0),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF8587F1),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              stateAccept=false;
-                            });
-                             myController.acceptFriends(widget.friends.idFriends);
-                          },
-                          child: Text("Chấp nhận")),
-                    ),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFD7D4D4),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            stateUnfriends=false;
-                          });
-                          myController.unFriends(widget.friends.idFriends);
-                        },
-                        child: Text("Xóa")),
-                  ],
-                ): stateUnfriends?Text("Các bạn đã là bạn bè"):Text("Đã gỡ lời mời"),
               ],
             ),
           ],

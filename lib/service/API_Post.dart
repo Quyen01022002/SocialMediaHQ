@@ -3,25 +3,32 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:http/http.dart' as http;
+import 'package:socialmediahq/model/ApiReponse.dart';
+import 'package:socialmediahq/model/CommentsEnity.dart';
 import 'package:socialmediahq/model/InteractionsEnity.dart';
 import 'package:socialmediahq/model/PostEnity.dart';
 import 'package:socialmediahq/model/PostModel.dart';
 
 import 'package:socialmediahq/service/const.dart';
-class API_Post
-{
 
-  static Future<List<PostModel>?> LoadMainHome(int userid) async {
+class API_Post {
+  static Future<List<PostModel>?> LoadMainHome(int userid, String token) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/listpost?userid=$userid'),
+      Uri.parse('$baseUrl/post/$userid'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (response.statusCode == 200) {
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
-        List<PostModel> listPost = postModelListFromJson(responseData);
-        return listPost;
+        ApiReponse<List<PostModel>> listPost = ApiReponse<List<PostModel>>.fromJson(
+          responseData,
+              (dynamic json) => List<PostModel>.from(json.map((x) => PostModel.fromJson(x))),
+        );
+        return listPost.payload;
       } else {
         return null;
       }
@@ -29,51 +36,32 @@ class API_Post
       return null;
     }
   }
-  static Future<PostEntity?> post(PostEntity post,String img) async {
-    final url = Uri.parse('$baseUrl/post');
-    final headers = {"Content-Type": "application/json"};
+
+  static Future<PostEntity?> post(
+      PostEntity post, List<String> img, String token) async {
+    final url = Uri.parse('$baseUrl/post/post');
+
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    List<Map<String, String>> listAnh =
+        img.map((imageUrl) => {'linkPicture': imageUrl}).toList();
+
     final Map<String, dynamic> data = {
-        "user_id": post.user_id,
-        "content_post": post.content_post,
-        "timestamp": post.timestamp?.toIso8601String(),
-        "status": post.status
+      "contentPost": post.content_post,
+      "listAnh": listAnh,
     };
 
-    final response = await http.post(
+    await http.post(
       url,
       headers: headers,
       body: jsonEncode(data),
     );
-    final responseData = response.body;
-    final postsaved = PostEntity.fromJson(json.decode(responseData));
-    if(postsaved==null)
-      {
 
-      }
-    final url2 = Uri.parse('$baseUrl/postimages');
-    final headers2  = {"Content-Type": "application/json"};
-    final Map<String, dynamic> dataimg = {
-        "link_picture": img,
-        "post_id": postsaved.post_id
-    };
-
-    final response2 = await http.post(
-      url2,
-      headers: headers2,
-      body: jsonEncode(dataimg),
-    );
-    final responseDataimg = response.body;
-    if(responseDataimg.isEmpty)
-      {
-        print("Đăng thất bại");
-      }
-    else
-      {
-        print("Đăng thành công");
-
-      }
   }
-  static Future<InteractionsEntity?> Liked(int userid,int postid) async {
+
+  static Future<InteractionsEntity?> Liked(int userid, int postid) async {
     final url = Uri.parse('$baseUrl/like');
     final headers = {"Content-Type": "application/json"};
     final Map<String, dynamic> data = {
@@ -93,7 +81,40 @@ class API_Post
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
-        InteractionsEntity listPost = InteractionsEntity.fromJson(json.decode(responseData));
+        InteractionsEntity listPost =
+            InteractionsEntity.fromJson(json.decode(responseData));
+        return listPost;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  static Future<CommentEntity?> Comments(
+      int userid, int postid, String content) async {
+    final url = Uri.parse('$baseUrl/comments');
+    final headers = {"Content-Type": "application/json"};
+    final Map<String, dynamic> data = {
+      "user_id": userid,
+      "post_id": postid,
+      "content_post": content,
+      "timestamp": DateTime.now().toIso8601String()
+    };
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = response.body;
+
+      if (responseData.isNotEmpty) {
+        CommentEntity listPost =
+            CommentEntity.fromJson(json.decode(responseData));
         return listPost;
       } else {
         return null;

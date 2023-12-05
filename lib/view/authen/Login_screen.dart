@@ -10,6 +10,7 @@ import 'package:socialmediahq/model/UserModel.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/service/API_dangky.dart';
 import 'package:socialmediahq/service/googleLogin.dart';
+import 'package:socialmediahq/view/authen/SignUpdateUser.dart';
 import 'package:socialmediahq/view/authen/sign_up_screen.dart';
 import 'package:socialmediahq/view/authen/verify_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -272,8 +273,8 @@ class _LoginscreenState extends State<Loginscreen> {
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeft,
-                                child: SignUpScreeen(
-                                  animated: false,
+                                child: SignUpScreeen(animated: false,state: false,
+
                                 ),
                               ),
                             );

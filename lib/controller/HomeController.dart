@@ -24,8 +24,9 @@ class HomeController extends GetxController {
       final prefs = await SharedPreferences.getInstance();
 
       isloaded(true);
-      final userId = prefs.getInt('userId') ?? 0;
-      List<PostModel>? result = await API_Post.LoadMainHome(userId);
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      List<PostModel>? result = await API_Post.LoadMainHome(userId,token);
       if (result != null) {
 
         listPost.clear();

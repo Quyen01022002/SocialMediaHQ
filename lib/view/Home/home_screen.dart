@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16, 26, 16, 16),
-                child: Expanded(
                   child: SizedBox(
                     height: 595.0,
                     child: ListView.builder(
@@ -75,7 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
