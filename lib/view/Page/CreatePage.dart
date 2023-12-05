@@ -10,7 +10,10 @@
 
 
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:socialmediahq/view/Page/CreatePage2.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({super.key});
@@ -19,7 +22,32 @@ class CreatePage extends StatefulWidget {
   State<CreatePage> createState() => _CreatePageState();
 }
 
-class _CreatePageState extends State<CreatePage> {
+class _CreatePageState extends State<CreatePage> with SingleTickerProviderStateMixin {
+
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    _startAutoTabSwitch();
+  }
+
+  void _startAutoTabSwitch() {
+    const switchInterval = Duration(seconds: 5); // Đặt khoảng thời gian tự chuyển tab (5 giây trong ví dụ này)
+    Timer.periodic(switchInterval, (timer) {
+      if (_tabController.index < _tabController.length - 1) {
+        _tabController.animateTo(_tabController.index + 1);
+      } else {
+        _tabController.animateTo(0);
+      }
+    });
+  }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -28,7 +56,7 @@ class _CreatePageState extends State<CreatePage> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                'Tạo nhóm',
+                'Tạo trang',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
@@ -36,116 +64,219 @@ class _CreatePageState extends State<CreatePage> {
               ),
               backgroundColor: Color(0xFF8587F1),
             ),
-            body: SingleChildScrollView(
-              child: Container(
-
-
-                decoration: BoxDecoration(color: Colors.white),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(30, 40, 30, 0),
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Hãy đặt một cái tên nhóm thật là ngầu nào!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-
-                        decoration: const InputDecoration(
-                          labelText: 'Tên nhóm',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20.0),
-                            ),
-                            borderSide: BorderSide.none,
-                          ),
-                          filled: true,
-                          fillColor: Color(0xFFF3F5F7),
-                          hintStyle: TextStyle(
-                            color: Colors.grey, // Đặt màu cho hint text
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      Text('Mô tả sự tuyệt vời về nhóm của bạn để thu hút cộng đồng nào!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        padding: EdgeInsets.only(left: 0, right: 0, top: 8),
-                        height: 200.0, // Điều chỉnh chiều cao của TextField
-                        width: 320.0, // Điều chỉnh độ rộng của TextField
-                        child: TextField(
-                          textAlign: TextAlign.left,
-                          textAlignVertical: TextAlignVertical.top,
-                          style: TextStyle(
-                            fontSize: 16,
-
-                          ),
-                          maxLines: null,
-                          decoration: const InputDecoration(
-                            labelText: 'Mô tả',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20.0),
-                              ),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Color(0xFFF3F5F7),
-                            hintStyle: TextStyle(
-                              color: Colors.grey, // Đặt màu cho hint text
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      Container(
-                        padding: EdgeInsets.only(top: 100),
-                        child: ElevatedButton(
-                          onPressed: () {
-
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF8587F1),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-
-                              Text(
-                                'Tạo nhóm',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+            body: CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: <Widget>[
+                      // Tab 1 content
+                      _buildTab1(),
+                      _buildTab2(),
+                      _buildTab3(),
                     ],
                   ),
-                ),
 
-              ),
+
+
+
+                )
+
+
+
+
+
+
+              ],
+
+
+
+
+
+
             ),
+           /* bottomNavigationBar: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    if (_tabController.index > 0) {
+                      _tabController.animateTo(_tabController.index - 1);
+                    }
+                  },
+                  child: Text('Tab trước'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_tabController.index < _tabController.length - 1) {
+                      _tabController.animateTo(_tabController.index + 1);
+                    }
+                  },
+                  child: Text('Tab tiếp theo'),
+                ),
+              ],
+            ),*/
 
           ),
 
 
         ),
 
-        //HomeHeader(),
+        Positioned(
+          left: 20,
+          bottom: 5,
+          right: 20,
+          child: Column(
+            children: [
+              Container(
+                height: 50,
+                color: Colors.black,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CreatePage2()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF8587F1),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+
+                      Text(
+                        'Bắt đầu tạo trang',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 20, bottom: 20),
+                child: Text('Đọc thêm vài chính sách cơ bản',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black
+
+
+                ),
+                ),
+              )
+            ],
+          ),
+        ),
       ],
+    );
+  }
+
+
+  Widget _buildTab1() {
+    return Container(
+      child: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            child: FittedBox(
+              fit: BoxFit.cover,
+                child: Image.asset("assets/images/khongbaiviet.png")
+            ),
+
+          )  ,
+          Container(
+            child: Text(
+              'Tạo trang để có thể trải nghiệm gì đó hơn nữa'
+            ),
+
+          ),
+          /*Container(
+            child: ElevatedButton(
+              onPressed: () {
+                _tabController.animateTo(_tabController.index + 1);
+
+              },
+              child: Text('Chuyển đến Tab 2'),
+            ),
+          ),*/
+
+        ],
+
+      ),
+
+    );
+  }
+  Widget _buildTab2() {
+    return Container(
+      child: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            child: FittedBox(
+                fit: BoxFit.cover,
+                child: Image.asset("assets/images/hot_news_page.png")
+            ),
+
+          )  ,
+          Container(
+            child: Text(
+                'Tạo trang để có thể trải nghiệm gì đó hơn nữa'
+            ),
+
+          ),
+          /*Container(
+            child: ElevatedButton(
+              onPressed: () {
+                _tabController.animateTo(_tabController.index + 1);
+
+              },
+              child: Text('Chuyển đến Tab 2'),
+            ),
+          ),*/
+
+        ],
+
+      ),
+
+    );
+  }
+  Widget _buildTab3() {
+    return Container(
+      child: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            child: FittedBox(
+                fit: BoxFit.cover,
+                child: Image.asset("assets/images/forum_page.jpg")
+            ),
+
+          )  ,
+          Container(
+            child: Text(
+                'Tạo trang để có thể trải nghiệm gì đó hơn nữa'
+            ),
+
+          ),
+          /*Container(
+            child: ElevatedButton(
+              onPressed: () {
+                _tabController.animateTo(_tabController.index + 1);
+
+              },
+              child: Text('Chuyển đến Tab 2'),
+            ),
+          ),*/
+
+        ],
+
+      ),
+
     );
   }
 }
