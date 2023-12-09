@@ -4,6 +4,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/controller/LoginController.dart';
+import 'package:socialmediahq/controller/ProfileController.dart';
 import 'package:socialmediahq/service/UserProvider.dart';
 import 'package:socialmediahq/service/googleLogin.dart';
 import 'package:socialmediahq/view/Group/group_screen.dart';
@@ -21,7 +22,7 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  SettingController settingController= Get.put(SettingController());
+  ProfileController settingController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,8 @@ class _SettingScreenState extends State<SettingScreen> {
                   children: [
                     Text(
                       "Menu",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     Container(
                         decoration: BoxDecoration(
@@ -75,33 +77,33 @@ class _SettingScreenState extends State<SettingScreen> {
                       child: Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              0,
-                              0,
-                              16,
-                              0,
+                              padding: const EdgeInsets.fromLTRB(
+                                0,
+                                0,
+                                0,
+                                0,
+                              ),
+                              child: ClipOval(
+                                  child: Image.network(
+                                settingController.Avatar.toString(),
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ))),
+
+                          Obx(
+                            () => Text(
+
+                              settingController.fisrt_name.value +
+                                  " " +
+                                  settingController.last_name.value,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                fontFamily: 'Roboto',
+                              ),
                             ),
-                            child: settingController.avatar.value == null
-                                ? ClipOval(
-                                    child: Image.asset(
-                                    "assets/images/backgourd.png",
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  ))
-                                : ClipOval(
-                                    child: Image.asset(
-                                      "assets/images/backgourd.png",
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  )),
                           ),
-                         Text(
-                           settingController.first_name.value,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 20),
-                                ),
                         ],
                       ),
                     ),
@@ -110,55 +112,74 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               Center(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 16, 6, 0),
-                          child: Container(
-                            decoration: BoxDecoration(color: Colors.white),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(18, 18, 118, 18),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset("assets/images/luu.png",width: 30,height: 40,),
-                                  Text("Đã lưu")
-                                ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: HomePage(),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 16, 6, 0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(18, 18, 118, 18),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/luu.png",
+                                      width: 30,
+                                      height: 40,
+                                    ),
+                                    Text("Đã lưu")
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                         GestureDetector(
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   PageTransition(
-                            //     type: PageTransitionType.rightToLeft,
-                            //     child: HomePage(),
-                            //   ),
-                            // );
                             LoginController.Logout();
                             Navigator.push(
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeft,
-                                child: Loginscreen(animated: false,),
+                                child: Loginscreen(
+                                  animated: false,
+                                ),
                               ),
-
                             );
                           },
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 16, 6, 0),
                             child: Container(
-                              decoration: BoxDecoration(color: Colors.white),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12)),
                               child: Padding(
                                 padding:
                                     const EdgeInsets.fromLTRB(18, 18, 120, 18),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Image.asset("assets/images/trang.png",width: 30,height: 40,),
+                                    Image.asset(
+                                      "assets/images/trang.png",
+                                      width: 30,
+                                      height: 40,
+                                    ),
                                     Text("Trang")
                                   ],
                                 ),
@@ -173,13 +194,20 @@ class _SettingScreenState extends State<SettingScreen> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8, 8, 6, 0),
                           child: Container(
-                            decoration: BoxDecoration(color: Colors.white),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12)),
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(18, 18, 95, 18),
+                              padding:
+                                  const EdgeInsets.fromLTRB(18, 18, 95, 18),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset("assets/images/timkiem.png",width: 30,height: 40,),
+                                  Image.asset(
+                                    "assets/images/timkiem.png",
+                                    width: 30,
+                                    height: 40,
+                                  ),
                                   Text("Tìm Kiếm")
                                 ],
                               ),
@@ -199,14 +227,20 @@ class _SettingScreenState extends State<SettingScreen> {
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 8, 6, 0),
                             child: Container(
-                              decoration: BoxDecoration(color: Colors.white),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12)),
                               child: Padding(
                                 padding:
-                                const EdgeInsets.fromLTRB(18, 18, 118, 18),
+                                    const EdgeInsets.fromLTRB(18, 18, 118, 18),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Image.asset("assets/images/nhom.png",width: 30,height: 40,),
+                                    Image.asset(
+                                      "assets/images/nhom.png",
+                                      width: 30,
+                                      height: 40,
+                                    ),
                                     Text("Nhóm")
                                   ],
                                 ),
@@ -215,6 +249,42 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        LoginController.Logout();
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.rightToLeft,
+                            child: Loginscreen(
+                              animated: false,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 6, 6, 0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(18, 18, 90, 18),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  "assets/images/trang.png",
+                                  width: 30,
+                                  height: 40,
+                                ),
+                                Text("Đăng xuất")
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

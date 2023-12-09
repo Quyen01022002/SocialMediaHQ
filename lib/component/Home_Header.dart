@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:socialmediahq/view/Messenger/Home_Messeger.dart';
 
+import '../view/Home/SearchScreen.dart';
+
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({Key? key}) : super(key: key);
@@ -26,7 +28,17 @@ class HomeHeader extends StatelessWidget {
                 width: 280,
                 height: 30,
                 child: TextField(
-                  decoration: InputDecoration(
+                    onTap:()
+                    {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.bottomToTop,
+                          child: SearchScreen(),
+                        ),
+                      );
+                    },
+                    decoration: InputDecoration(
                     prefixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),

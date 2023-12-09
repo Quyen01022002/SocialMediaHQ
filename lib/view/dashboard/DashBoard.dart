@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:socialmediahq/component/Post/create_post.dart';
+import 'package:socialmediahq/controller/DashBoardController.dart';
 import 'package:socialmediahq/view/Friends/friend_sreen.dart';
 import 'package:socialmediahq/view/Home/home_screen.dart';
 import 'package:socialmediahq/view/Notification/notification_screen.dart';
 import 'package:socialmediahq/view/Settings/setting_screen.dart';
-
+import 'package:badges/badges.dart' as badges;
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
+  final NoticationsController myController = Get.put(NoticationsController());
   int currentTab = 0;
   final List<Widget> screens = [
     HomeScreen(),
@@ -24,7 +27,11 @@ class _DashBoardState extends State<DashBoard> {
 
   ];
   final PageStorageBucket buket = PageStorageBucket();
-
+  @override
+  void initState() {
+    super.initState();
+    myController.loadNotications();
+  }
   @override
   Widget build(BuildContext context) {
     Widget currentScreen = screens[currentTab];
@@ -119,13 +126,16 @@ class _DashBoardState extends State<DashBoard> {
                       child:Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.notifications,
-                            color:currentTab== 2? Colors.blue:Colors.grey,
-                          ),
-                          Text("Notification",style: TextStyle(color:currentTab ==2? Colors.blue:Colors.grey,),
+                          badges.Badge(
+                            badgeContent: Text(myController.listNoticaiotns.length<=99?myController.listNoticaiotns.length.toString():'99+',style: TextStyle(color: Colors.white,fontSize:8),),
+                            child: Icon(
+                              Icons.notifications,
+                              color:currentTab== 2? Colors.blue:Colors.grey,
+                            ),
                           ),
 
+                          Text("Notification",style: TextStyle(color:currentTab ==2? Colors.blue:Colors.grey,),
+                          ),
                         ],
                       ),
                     ),

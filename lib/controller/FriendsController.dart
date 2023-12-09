@@ -53,6 +53,7 @@ class FriendController extends GetxController {
   void unFriends(int? friendID) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
-    API_Friend.unFriends(friendID, token);
+    final userId = prefs.getInt('id') ?? 0;
+    API_Friend.unFriends(userId,friendID, token);
   }
 }

@@ -15,6 +15,7 @@ class UserEnity {
   final String? hash;
   final String? avatarUrl;
   final bool? is_actived;
+  final bool? isFriends;
   final DateTime? created_at;
   final DateTime? updated_at;
   final int? countFriend;
@@ -32,6 +33,7 @@ class UserEnity {
     this.hash,
     this.avatarUrl,
     this.is_actived,
+    this.isFriends,
     this.created_at,
     this.updated_at,
     this.countFriend,
@@ -49,12 +51,12 @@ class UserEnity {
         hash: data["hash"] ?? "",
         avatarUrl: data["profilePicture"] ?? "",
         is_actived: data["isActived"] ?? false,
+        isFriends: data["isFriends"] ?? false,
         created_at:
             DateTime.tryParse(data["createdAt"] ?? "") ?? DateTime.now(),
         updated_at:
             DateTime.tryParse(data["updatedAt"] ?? "") ?? DateTime.now(),
-    countFriend: data.containsKey("countFriend") ? data["countFriend"] : 0,
-    idFriends: data.containsKey("idFriends") ? data["idFriends"] : 0,
-
-  );
+        countFriend: data.containsKey("countFriend") ? data["countFriend"] : 0,
+        idFriends: data.containsKey("idFriends") ? data["idFriends"] : 0,
+      );
 }
