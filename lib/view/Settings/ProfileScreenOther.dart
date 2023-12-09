@@ -1,32 +1,30 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:socialmediahq/component/Post/Home_Post.dart';
 import 'package:socialmediahq/controller/ProfileController.dart';
-import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/view/Settings/chooseimage.dart';
 
-import 'DisplaySelectedImagePage.dart';
+import '../../model/UsersEnity.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileScreenOther extends StatefulWidget {
+  final int id;
+  const ProfileScreenOther({Key? key,required this.id}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreenOther> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
+class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool isFriend = false;
   double opacity = 0.0;
-  ProfileController profileController = Get.find();
+  ProfileController profileController = Get.put(ProfileController());
 
   @override
   void initState() {
     super.initState();
-    profileController.loadthongtin();
+    profileController.loadthongtinOther(widget.id);
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -57,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         width: MediaQuery.of(context).size.width,
                         height: 220,
                       ),
-                      Obx(() =>Positioned(
+                      Positioned(
                         bottom: 10,
                         left: 30,
                         child: Column(
@@ -77,7 +75,13 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                               ),
                               child: GestureDetector(
                                 onTap: () {
-                                  _pickImage(context,ImageSource.gallery);
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.bottomToTop,
+                                      child: ChooseImage(),
+                                    ),
+                                  );
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
@@ -94,13 +98,33 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
-                              child: Obx(() =>Text(
+                              child: Text(
                                 profileController.fisrt_name.toString() + " " + profileController.last_name.toString(),
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                 ),
-                              ),)
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (!isFriend) // Nếu chưa là bạn bè, hiển thị nút "Thêm Bạn Bè"
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Color(0xFF8587F1),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        isFriend = false;
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(45, 10, 45, 10),
+                                      child: Text("Thêm Bạn Bè"),
+                                    ),
+                                  ),
+                              ],
                             ),
                             Text(
                               "Hồ Chí Minh, Việt Nam",
@@ -127,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                             ),
                           ],
                         ),
-                      ), )
+                      ),
 
                     ],
                   ),
@@ -274,17 +298,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
 
 }
-void _pickImage(BuildContext context, ImageSource source) async {
-  XFile? pickedImage = await ImagePicker().pickImage(source: source);
 
-  if (pickedImage != null) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DisplaySelectedImagePage(imagePath: pickedImage.path),
-      ),
-    );
-  }
-}
 
 

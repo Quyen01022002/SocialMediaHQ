@@ -24,9 +24,11 @@ class API_Post {
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
-        ApiReponse<List<PostModel>> listPost = ApiReponse<List<PostModel>>.fromJson(
+        ApiReponse<List<PostModel>> listPost =
+            ApiReponse<List<PostModel>>.fromJson(
           responseData,
-              (dynamic json) => List<PostModel>.from(json.map((x) => PostModel.fromJson(x))),
+          (dynamic json) =>
+              List<PostModel>.from(json.map((x) => PostModel.fromJson(x))),
         );
         return listPost.payload;
       } else {
@@ -58,38 +60,20 @@ class API_Post {
       headers: headers,
       body: jsonEncode(data),
     );
-
   }
 
-  static Future<InteractionsEntity?> Liked(int userid, int postid) async {
-    final url = Uri.parse('$baseUrl/like');
-    final headers = {"Content-Type": "application/json"};
-    final Map<String, dynamic> data = {
-      "user_id": userid,
-      "post_id": postid,
-      "liked": true,
-      "timestamp": DateTime.now().toIso8601String()
+  static Future<InteractionsEntity?> Liked(String token, int postid,int userId) async {
+    final url = Uri.parse('$baseUrl/interations?post=$postid&user=$userId');
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
     };
 
-    final response = await http.post(
+    await http.post(
       url,
       headers: headers,
-      body: jsonEncode(data),
     );
 
-    if (response.statusCode == 200) {
-      final responseData = response.body;
-
-      if (responseData.isNotEmpty) {
-        InteractionsEntity listPost =
-            InteractionsEntity.fromJson(json.decode(responseData));
-        return listPost;
-      } else {
-        return null;
-      }
-    } else {
-      return null;
-    }
   }
 
   static Future<CommentEntity?> Comments(

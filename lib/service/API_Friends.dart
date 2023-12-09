@@ -105,9 +105,9 @@ class API_Friend {
 
 
   }
-  static void unFriends(int? userid, String token) async {
+  static void unFriends(int? userid,int? friendid,String token) async {
     await http.delete(
-      Uri.parse('$baseUrl/friends/unfriend/$userid'),
+      Uri.parse('$baseUrl/friends/unfriend?userId=$userid&friendsId=$friendid'),
       headers: {
         'Authorization': 'Bearer $token',
       },
