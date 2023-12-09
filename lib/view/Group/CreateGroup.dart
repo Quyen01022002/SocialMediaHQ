@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:socialmediahq/controller/Group/CreateGroupController.dart';
 import 'package:socialmediahq/view/Group/HomeGroup.dart';
 
 import '../../component/Home_Header.dart';
@@ -12,6 +14,11 @@ class CreateGroup extends StatefulWidget {
 }
 
 class _CreateGroupState extends State<CreateGroup> {
+  final GroupController myController = Get.put(GroupController());
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -47,7 +54,7 @@ class _CreateGroupState extends State<CreateGroup> {
                       ),
                       const SizedBox(height: 16),
                       TextField(
-
+                        controller: myController.textControllerNameGroup,
                         decoration: const InputDecoration(
                           labelText: 'Tên nhóm',
                           border: OutlineInputBorder(
@@ -76,6 +83,7 @@ class _CreateGroupState extends State<CreateGroup> {
                         height: 200.0, // Điều chỉnh chiều cao của TextField
                         width: 320.0, // Điều chỉnh độ rộng của TextField
                         child: TextField(
+                          controller: myController.textControllerMota,
                           textAlign: TextAlign.left,
                           textAlignVertical: TextAlignVertical.top,
                           style: TextStyle(
@@ -104,10 +112,9 @@ class _CreateGroupState extends State<CreateGroup> {
                         padding: EdgeInsets.only(top: 100),
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomeGroup()),
-                            );
+                            myController.desc.value = myController.textControllerMota.text;
+                            myController.nameGroup.value= myController.textControllerNameGroup.text;
+                            myController.CreateGroup(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF8587F1),

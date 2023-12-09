@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
+
+import '../../model/GroupModel.dart';
+import '../../model/UsersEnity.dart';
 
 class AddMembersGroup extends StatefulWidget {
   const AddMembersGroup({Key? key}) : super(key: key);
@@ -8,21 +13,25 @@ class AddMembersGroup extends StatefulWidget {
 }
 
 class User {
+  final int id;
   final String name;
   final String avatar;
   bool check;
 
-  User(this.name, this.avatar, this.check);
+  User(this.id, this.name, this.avatar, this.check);
 }
 
 class _AddMembersGroupState extends State<AddMembersGroup> {
-  final List<User> users = [
-    User('Đỗ Duy Hào', 'assets/images/facebook.png', false),
-    User('Trần Bửu Quyến', 'assets/images/google.png', false),
-    User('Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
-    User('Đỗ Duy Hào', 'assets/images/facebook.png', false),
-  ];
+  final HomeGroupController homeGroupController = Get.put(HomeGroupController());
 
+
+  final List<User> userss = [
+    User(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
+    User(1,'Trần Bửu Quyến', 'assets/images/google.png', false),
+    User(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    User(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
+  ];
+  final List<User> users =[];
   List<User> searchResults = [];
 
   void onSearch(String keyword) {
@@ -36,7 +45,25 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
     }
     setState(() {});
   }
+  void _loadFriends(){
+    homeGroupController.loadFriends;
+  }
+  Future<void> _mapUserMemberToUser() async {
 
+    if (homeGroupController.users!= null) {
+      homeGroupController.users!.forEach((element) {
+        User user = User(element.id, element.firstName + " " + element.lastName,
+            element.profilePicture, false);
+        users.add(user);
+      });
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+  _mapUserMemberToUser();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Stack(
