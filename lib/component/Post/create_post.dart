@@ -58,6 +58,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Future<void> _uploadImages() async {
+    List<String> imagePaths = [];
     for (var image in _images) {
       var url = Uri.parse('https://api.cloudinary.com/v1_1/dq21kejpj/image/upload');
 
@@ -71,15 +72,13 @@ class _CreatePostState extends State<CreatePost> {
         final response = await request.send();
 
           if (response.statusCode == 200) {
-            List<String> imagePaths = [];
+
             final responseData = await response.stream.toBytes();
             final responseString = String.fromCharCodes(responseData);
             final jsonMap = jsonDecode(responseString);
             final imageUrl = jsonMap['url'];
 
             imagePaths.add(imageUrl);
-
-            postController.imagePaths.value = imagePaths;
             print('Image URL: $imageUrl');
           } else {
             print('Failed to upload image. Status code: ${response.statusCode}');
@@ -87,6 +86,7 @@ class _CreatePostState extends State<CreatePost> {
       } catch (error) {
         print('Error uploading image: $error');
       }
+      postController.imagePaths.value = imagePaths;
     }
   }
 

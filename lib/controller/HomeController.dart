@@ -13,11 +13,7 @@ class HomeController extends GetxController {
   RxBool isliked = false.obs;
   RxInt postid = 0.obs;
 
-  void onInit()
-  {
-    loadPost();
-    super.onInit();
-  }
+
   void loadPost() async
   {
     try {
@@ -31,6 +27,7 @@ class HomeController extends GetxController {
 
         listPost.clear();
         listPost.addAll(result);
+        update();
       }
     }
     finally
@@ -45,8 +42,9 @@ class HomeController extends GetxController {
       final prefs = await SharedPreferences.getInstance();
 
       isliked(true);
-      final userId = prefs.getInt('userId') ?? 0;
-      InteractionsEntity? result = await API_Post.Liked(userId,postid.value);
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+     await API_Post.Liked(token,postid.value,userId);
     }
     finally
     {

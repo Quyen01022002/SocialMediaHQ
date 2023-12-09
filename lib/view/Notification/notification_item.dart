@@ -1,21 +1,71 @@
 import 'package:flutter/material.dart';
-class NotificationsItem extends StatefulWidget {
-  const NotificationsItem({Key? key}) : super(key: key);
 
-  @override
-  State<NotificationsItem> createState() => _NotificationsItemState();
-}
+class NotificationItem extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String time;
+  final bool isRead;
 
-class _NotificationsItemState extends State<NotificationsItem> {
-  final List<String> items = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
+  NotificationItem({
+    required this.title,
+    required this.subtitle,
+    required this.time,
+    this.isRead = false,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(items[index]),
-        );
+    return ListTile(
+      contentPadding: EdgeInsets.all(10),
+      leading: CircleAvatar(
+        radius: 25,
+        backgroundColor: Colors.blue, // You can customize the color
+        child: Icon(
+          Icons.notifications,
+          color: Colors.white,
+        ),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: isRead ? Colors.black : Colors.blue,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: isRead ? Colors.grey : Colors.black,
+        ),
+      ),
+      trailing: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            time,
+            style: TextStyle(
+              color: isRead ? Colors.grey : Colors.blue,
+            ),
+          ),
+          if (!isRead)
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(
+                'New',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+        ],
+      ),
+      onTap: () {
+        // Add your logic for handling tap on the notification item
       },
     );
   }
