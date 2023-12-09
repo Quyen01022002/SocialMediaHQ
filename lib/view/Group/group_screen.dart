@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:socialmediahq/view/Group/CreateGroup.dart';
 import 'package:socialmediahq/view/Group/HomeGroup.dart';
+
+import '../../controller/Group/HomeGroupController.dart';
 
 class GroupScreen extends StatefulWidget {
   const GroupScreen({super.key});
@@ -18,7 +21,7 @@ class Group{
 }
 
 class _GroupScreenState extends State<GroupScreen>  with SingleTickerProviderStateMixin {
-
+  final HomeGroupController homeGroupController = Get.put(HomeGroupController());
 
   final List<Group> listgroup = [
     Group('Nhóm tự kỉ chat một mình', 'assets/images/facebook.png'),
@@ -174,7 +177,12 @@ class _GroupScreenState extends State<GroupScreen>  with SingleTickerProviderSta
     return ListView.builder(
       itemCount: groupList.length,
       itemBuilder: (context, index) {
-        return ListTile(
+        return ListTile(onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeGroup()),
+          );
+        },
           leading: CircleAvatar(
         backgroundImage: AssetImage(groupList[index].avatar),
         ),
@@ -188,6 +196,9 @@ class _GroupScreenState extends State<GroupScreen>  with SingleTickerProviderSta
       itemCount: groupList.length,
       itemBuilder: (context, index) {
         return ListTile(
+          onTap: () {
+            homeGroupController.GetOneGroup(context, 1);
+          },
           leading: CircleAvatar(
             backgroundImage: AssetImage(groupList[index].avatar),
           ),

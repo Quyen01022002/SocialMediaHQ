@@ -1,37 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
 
-import '../../model/GroupModel.dart';
-import '../../model/UsersEnity.dart';
-
-class AddMembersGroup extends StatefulWidget {
-  const AddMembersGroup({Key? key}) : super(key: key);
+class BlockUserScreen extends StatefulWidget {
+  const BlockUserScreen({super.key});
 
   @override
-  State<AddMembersGroup> createState() => _AddMembersGroupState();
+  State<BlockUserScreen> createState() => _BlockUserScreenState();
 }
 
 class User {
-  final int id;
   final String name;
   final String avatar;
-  bool check;
-
-  User(this.id, this.name, this.avatar, this.check);
+  User(this.name, this.avatar);
 }
-
-class _AddMembersGroupState extends State<AddMembersGroup> {
-  final HomeGroupController homeGroupController = Get.put(HomeGroupController());
-
-
-  final List<User> userss = [
-    User(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
-    User(1,'Trần Bửu Quyến', 'assets/images/google.png', false),
-    User(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
-    User(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
+class _BlockUserScreenState extends State<BlockUserScreen> {
+  final List<User> users = [
+    User('Đỗ Duy Hào', 'assets/images/facebook.png'),
+    User('Trần Bửu Quyến', 'assets/images/google.png'),
+    User('Văn Bá Trung Thành', 'assets/images/backgourd.png'),
+    User('Đỗ Duy Hào', 'assets/images/facebook.png'),
   ];
-  final List<User> users =[];
+
   List<User> searchResults = [];
 
   void onSearch(String keyword) {
@@ -45,25 +33,7 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
     }
     setState(() {});
   }
-  void _loadFriends(){
-    homeGroupController.loadFriends;
-  }
-  Future<void> _mapUserMemberToUser() async {
 
-    if (homeGroupController.users!= null) {
-      homeGroupController.users!.forEach((element) {
-        User user = User(element.id, element.firstName + " " + element.lastName,
-            element.profilePicture, false);
-        users.add(user);
-      });
-    }
-  }
-  @override
-  void initState() {
-    super.initState();
-  _mapUserMemberToUser();
-
-  }
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -74,15 +44,15 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
               slivers: [
                 SliverAppBar(
                   backgroundColor: Color(0xFF8587F1),
-                  title: Text('Thêm thành viên'),
+                  title: Text('Danh sách đen của bạn'),
                 ),
                 SliverToBoxAdapter(
                   child: Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(top: 20, bottom: 20),
+                        padding: EdgeInsets.only(top: 20, bottom: 20, left:20, right: 20),
                         child: Text(
-                          'Bạn có thể mời các bạn bè dưới đây: ',
+                          'Wow! Hãy xem các phần tử có các gương mặt sáng mà bạn đã liệt kê vào đây ',
                           style: TextStyle(
                             fontSize: 18,
                           ),
@@ -120,19 +90,15 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
                                   ? users[index].name
                                   : searchResults[index].name,
                             ),
-                            trailing: Checkbox(
-                              value: searchResults.isEmpty
-                                  ? users[index].check
-                                  : searchResults[index].check,
-                              onChanged: (bool? newValue) {
-                                if (newValue != null) {
-                                  setState(() {
-                                    searchResults.isEmpty
-                                        ? users[index].check = newValue
-                                        : searchResults[index].check = newValue;
-                                  });
-                                }
+                            trailing: ElevatedButton(
+                              onPressed: () {
+                                // Xử lý sự kiện khi nút được nhấn
+                                _showConfirmationDialog(context);
                               },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF8587F1),
+                              ),
+                              child: Text('Bỏ chặn'),
                             ),
                           ),
                           SizedBox(height: 15),
@@ -163,11 +129,8 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    child: Icon(Icons.add),
-                  ),
                   Text(
-                    'Mời vào nhóm',
+                    'Xong',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -179,6 +142,36 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
           ),
         ),
       ],
+    );
+  }
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Xác nhận'),
+          content: Text('Bạn có chắc chắn bỏ chặn'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Đóng hộp thoại và thực hiện tác vụ khi người dùng chọn Yes
+                Navigator.of(context).pop();
+                // Thực hiện tác vụ khi người dùng chọn Yes ở đây
+              },
+              child: Text('Đúng rồi, hết giận rồi'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Đóng hộp thoại khi người dùng chọn No
+                Navigator.of(context).pop();
+              },
+              child: Text('Không, tao giận dai lắm, phải chặn tiếp'),
+            ),
+          ],
+        );
+      },
+
     );
   }
 }

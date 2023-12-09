@@ -1,23 +1,28 @@
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:socialmediahq/controller/Group/CreateGroupController.dart';
-import 'package:socialmediahq/view/Group/HomeGroup.dart';
+import 'package:image_picker/image_picker.dart';
 
-import '../../component/Home_Header.dart';
-
-class CreateGroup extends StatefulWidget {
-  const CreateGroup({super.key});
+class UpdateGroup extends StatefulWidget {
+  const UpdateGroup({super.key});
 
   @override
-  State<CreateGroup> createState() => _CreateGroupState();
+  State<UpdateGroup> createState() => _UpdateGroupState();
 }
 
-class _CreateGroupState extends State<CreateGroup> {
-  final GroupController myController = Get.put(GroupController());
+class _UpdateGroupState extends State<UpdateGroup> {
+  File? _selectedImage;
 
+  Future<void> _pickImage() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
 
-
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +32,7 @@ class _CreateGroupState extends State<CreateGroup> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                'Tạo nhóm',
+                'Chỉnh sửa thông tin nhóm',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
@@ -47,14 +52,14 @@ class _CreateGroupState extends State<CreateGroup> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Hãy đặt một cái tên nhóm thật là ngầu nào!',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       TextField(
-                        controller: myController.textControllerNameGroup,
+
                         decoration: const InputDecoration(
                           labelText: 'Tên nhóm',
                           border: OutlineInputBorder(
@@ -83,7 +88,6 @@ class _CreateGroupState extends State<CreateGroup> {
                         height: 200.0, // Điều chỉnh chiều cao của TextField
                         width: 320.0, // Điều chỉnh độ rộng của TextField
                         child: TextField(
-                          controller: myController.textControllerMota,
                           textAlign: TextAlign.left,
                           textAlignVertical: TextAlignVertical.top,
                           style: TextStyle(
@@ -107,14 +111,22 @@ class _CreateGroupState extends State<CreateGroup> {
                           ),
                         ),
                       ),
+                      if (_selectedImage != null)
+                        Image.file(
+                          _selectedImage!,
+                          width: 200,
+                          height: 200,
+                        ),
+                      ElevatedButton(
+                        onPressed: _pickImage,
+                        child: Text('Chọn ảnh'),
+                      ),
 
                       Container(
                         padding: EdgeInsets.only(top: 100),
                         child: ElevatedButton(
                           onPressed: () {
-                            myController.desc.value = myController.textControllerMota.text;
-                            myController.nameGroup.value= myController.textControllerNameGroup.text;
-                            myController.CreateGroup(context);
+
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF8587F1),
@@ -124,7 +136,7 @@ class _CreateGroupState extends State<CreateGroup> {
                             children: [
 
                               Text(
-                                'Tạo nhóm',
+                                'Lưu thông tin chỉnh sửa',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -141,13 +153,26 @@ class _CreateGroupState extends State<CreateGroup> {
               ),
             ),
 
-            ),
-
-
           ),
+
+
+        ),
 
         //HomeHeader(),
       ],
     );
+  }
+
+
+
+  Widget _buildImagePicker() {
+    if (_selectedImage != null) {
+      return Image.file(_selectedImage!);
+    } else {
+      return ElevatedButton(
+        onPressed: _pickImage,
+        child: Text('Chọn ảnh'),
+      );
+    }
   }
 }

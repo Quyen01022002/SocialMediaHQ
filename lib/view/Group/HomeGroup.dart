@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
 import 'package:socialmediahq/view/Group/AddMembers.dart';
 
 class HomeGroup extends StatefulWidget {
@@ -9,13 +11,19 @@ class HomeGroup extends StatefulWidget {
 }
 
 class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMixin {
-
+  final HomeGroupController homeGroupController = Get.put(HomeGroupController());
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _loadData();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+  }
+
+
+  void _loadData() async{
+    await homeGroupController.GetOneGroup;
   }
 
   @override
@@ -40,7 +48,8 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
             flexibleSpace: FlexibleSpaceBar(
               title:
 
-                  Text('Đây là nhóm duy nhất của Ứng dụng MXH QH',
+                  Text(
+                    homeGroupController.nameGroup.toString(),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,),
 
@@ -174,10 +183,7 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
                           padding: EdgeInsets.only(left: 10),
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => AddMembersGroup()),
-                              );
+                              homeGroupController.loadFriends(context);
                             },
                             style: ElevatedButton.styleFrom(
 
