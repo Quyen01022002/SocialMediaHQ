@@ -68,11 +68,11 @@ class _DisplaySelectedImagePageState
         actions: [
           IconButton(
             icon: Icon(Icons.done),
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 statepost=true;
               });
-              _uploadImages();
+               await _uploadImages();
               myController.UpdateUser(context);
               Navigator.pop(
                 context,

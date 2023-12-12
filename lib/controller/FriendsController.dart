@@ -10,6 +10,7 @@ import '../model/UsersEnity.dart';
 
 class FriendController extends GetxController {
   RxList<UserEnity> listPost = List<UserEnity>.empty(growable: true).obs;
+  RxList<UserEnity> listFriend = List<UserEnity>.empty(growable: true).obs;
 
 
   void loadPost() async {
@@ -34,14 +35,14 @@ class FriendController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id') ?? 0;
     final token = prefs.getString('token') ?? "";
-    List<UserEnity>? result = await API_Friend.LoadFriends(userId, token);
+    List<UserEnity>? result = await API_Friend.LoadListFriends(userId, token);
     if (result != null) {
-      listPost.clear();
-      listPost.addAll(result);
-      print("Updated listPost: $listPost");
+      listFriend.clear();
+      listFriend.addAll(result);
+      print("Updated listPost: $listFriend");
       update();
     } else {
-      listPost.clear();
+      listFriend.clear();
       update();
     }
   }
@@ -54,6 +55,6 @@ class FriendController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
     final userId = prefs.getInt('id') ?? 0;
-    API_Friend.unFriends(userId,friendID, token);
+    API_Friend.unFriends(friendID, token);
   }
 }

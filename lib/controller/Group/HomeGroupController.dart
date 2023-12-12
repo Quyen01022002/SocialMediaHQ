@@ -5,6 +5,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/model/GroupMemberRequest.dart';
 import 'package:socialmediahq/model/GroupModel.dart';
+import 'package:socialmediahq/model/PostModel.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/view/Group/AddMembers.dart';
 import 'package:socialmediahq/view/Group/HomeGroup.dart';
@@ -19,6 +20,7 @@ class HomeGroupController extends GetxController{
   RxInt group_id = 0.obs;
   RxBool isAdmin = false.obs;
   List<UserMember>? listUserMembers=[];
+  List<PostModel> listPost=[];
   final textControllerMota = TextEditingController();
   final textControllerNameGroup = TextEditingController();
   final desc = RxString('');
@@ -37,7 +39,8 @@ class HomeGroupController extends GetxController{
         createdDate: DateTime.now(),
         description: description,
         updatedDate: DateTime.now(),
-        listMembers: []
+        listMembers: [],
+        listPost: []
     );
 
     final token = prefs.getString('token')??"";
@@ -68,6 +71,7 @@ class HomeGroupController extends GetxController{
         nameGroup.value = groupModel.name ?? "";
         descriptionGroup.value = groupModel.description ?? "";
         listUserMembers= groupModel.listMembers;
+        listPost= groupModel.listPost;
         if (groupModel.listMembers[0].id == adminId){
           isAdmin.value = true;
         }
@@ -246,7 +250,8 @@ class HomeGroupController extends GetxController{
         createdDate: DateTime.now(),
         description: description,
         updatedDate: DateTime.now(),
-        listMembers: []
+        listMembers: [],
+        listPost: []
     );
 
     final token = prefs.getString('token')??"";

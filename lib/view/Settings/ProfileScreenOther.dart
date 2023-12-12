@@ -1,31 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/component/Post/Home_Post.dart';
 import 'package:socialmediahq/controller/ProfileController.dart';
 import 'package:socialmediahq/view/Settings/chooseimage.dart';
 
+import '../../controller/FriendsController.dart';
 import '../../model/UsersEnity.dart';
 
 class ProfileScreenOther extends StatefulWidget {
   final int id;
-  const ProfileScreenOther({Key? key,required this.id}) : super(key: key);
+
+  const ProfileScreenOther({Key? key, required this.id}) : super(key: key);
 
   @override
   State<ProfileScreenOther> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerProviderStateMixin {
+class _ProfileScreenState extends State<ProfileScreenOther>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool isFriend = false;
+  late bool isOwner = false;
   double opacity = 0.0;
+  late RxInt curnetUser = 0.obs;
   ProfileController profileController = Get.put(ProfileController());
+  final FriendController friendController = Get.put(FriendController());
 
   @override
   void initState() {
     super.initState();
     profileController.loadthongtinOther(widget.id);
     _tabController = TabController(length: 2, vsync: this);
+    initCurrentUser();
+    if (widget.id == curnetUser) {
+      isOwner = true;
+    }
+  }
+
+  void initCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    curnetUser = (prefs.getInt('id') ?? 0).obs;
   }
 
   @override
@@ -86,44 +101,65 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: ClipOval(
-                                    child: Obx(() => Image.network(
+                                      child: Obx(
+                                    () => Image.network(
                                       profileController.Avatar.toString(),
                                       width: 120,
                                       height: 120,
                                       fit: BoxFit.cover,
-                                    ),)
-                                  ),
+                                    ),
+                                  )),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Obx(() => Text(
-                                profileController.fisrt_name.toString() + " " + profileController.last_name.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),)
-                            ),
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Obx(
+                                  () => Text(
+                                    profileController.fisrt_name.toString() +
+                                        " " +
+                                        profileController.last_name.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                )),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (!isFriend) // Nếu chưa là bạn bè, hiển thị nút "Thêm Bạn Bè"
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color(0xFF8587F1),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        isFriend = false;
-                                      });
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(45, 10, 45, 10),
-                                      child: Text("Thêm Bạn Bè"),
-                                    ),
+                                // Nếu chưa là bạn bè, hiển thị nút "Thêm Bạn Bè"
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFF8587F1),
                                   ),
+                                  onPressed: () {
+                                    setState(() {
+                                      profileController.isFriend = false.obs;
+                                    });
+                                  },
+                                  child: isOwner == false &&
+                                          profileController.isFriend == false
+                                      ? Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              45, 10, 45, 10),
+                                          child: Text("Thêm Bạn Bè"),
+                                        )
+                                      : isOwner == true
+                                          ? SizedBox()
+                                          : GestureDetector(
+                                    onTap: (){
+                                      int? friendId = profileController.idFriends.value;
+                                      friendController.unFriends(friendId);
+                                    },
+                                            child: Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        45, 10, 45, 10),
+                                                child: Text("Hủy Kết Bạn"),
+                                              ),
+                                          ),
+                                ),
                               ],
                             ),
                             Text(
@@ -137,13 +173,22 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
                               padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
                               child: Container(
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(26, 16, 0, 0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(26, 16, 0, 0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      _buildStat(profileController.post.toString(), 'Bài Viết'),
-                                      _buildStat(profileController.follow.toString(), 'Người Theo Dõi'),
-                                      _buildStat(profileController.following.toString(), 'Đang Theo Dõi'),
+                                      _buildStat(
+                                          profileController.post.toString(),
+                                          'Bài Viết'),
+                                      _buildStat(
+                                          profileController.follow.toString(),
+                                          'Người Theo Dõi'),
+                                      _buildStat(
+                                          profileController.following
+                                              .toString(),
+                                          'Đang Theo Dõi'),
                                     ],
                                   ),
                                 ),
@@ -152,7 +197,6 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
                           ],
                         ),
                       ),
-
                     ],
                   ),
                 ),
@@ -220,7 +264,8 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
   Widget _buildTabPost(String content) {
     print("Số bài đăng: ${profileController.listPost.length}");
     return Container(
-      height: MediaQuery.of(context).size.height - 340, // Điều chỉnh chiều cao theo cần thiết
+      height: MediaQuery.of(context).size.height -
+          340, // Điều chỉnh chiều cao theo cần thiết
       child: ListView.builder(
         itemCount: profileController.listPost.length,
         itemBuilder: (context, index) {
@@ -232,17 +277,19 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
   }
 
   Widget _buildTabContent(List<UserEnity> friendList) {
-    return Obx(() => GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3, // Số lượng cột
-        crossAxisSpacing: 8.0, // Khoảng cách giữa các cột
-        mainAxisSpacing: 8.0, // Khoảng cách giữa các dòng
+    return Obx(
+      () => GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, // Số lượng cột
+          crossAxisSpacing: 8.0, // Khoảng cách giữa các cột
+          mainAxisSpacing: 8.0, // Khoảng cách giữa các dòng
+        ),
+        itemCount: friendList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return _buildFriendItem(friendList[index]);
+        },
       ),
-      itemCount: friendList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return _buildFriendItem(friendList[index]);
-      },
-    ),);
+    );
   }
 
   Widget _buildFriendItem(UserEnity friend) {
@@ -282,7 +329,6 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
         ],
       ),
     );
-
   }
 
   Widget _buildStat(String value, String label) {
@@ -296,8 +342,4 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
       ],
     );
   }
-
 }
-
-
-

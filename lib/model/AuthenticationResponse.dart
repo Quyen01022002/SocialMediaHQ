@@ -26,7 +26,7 @@ class AuthenticationResponse {
     token: data["token"] ?? "",
     firstName: data["firstName"] ?? "",
     lastName: data["lastName"] ?? "",
-    Avatar: data["Avatar"] ?? "",
+    Avatar: data["avatar"] ?? "",
 
 
   );

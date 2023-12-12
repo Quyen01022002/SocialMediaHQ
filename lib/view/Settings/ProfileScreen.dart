@@ -5,6 +5,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:socialmediahq/component/Post/Home_Post.dart';
 import 'package:socialmediahq/controller/ProfileController.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
+import 'package:socialmediahq/view/Settings/DisplayBackGroudImagePage.dart';
 import 'package:socialmediahq/view/Settings/chooseimage.dart';
 
 import 'DisplaySelectedImagePage.dart';
@@ -52,11 +53,35 @@ class _ProfileScreenState extends State<ProfileScreen>
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
                     children: [
-                      Image.asset(
-                        "assets/images/backgourd.png",
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        height: 220,
+                      GestureDetector(
+                        onTap: () {
+                          final Name = profileController.fisrt_name.toString() +
+                              " " +
+                              profileController.last_name.toString();
+                          _pickImageBackGroud(context, ImageSource.gallery,
+                              Name, profileController.Avatar.toString());
+                        },
+                        child: Obx(() {
+                          final imageUrl =
+                              profileController.BackGround.toString();
+                          if (imageUrl.startsWith('http')) {
+                            // Đây là một URL hợp lệ
+                            return Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).size.width,
+                              height: 220,
+                            );
+                          } else {
+                            // Đây có thể là đường dẫn cục bộ
+                            return Image.asset(
+                              "assets/images/backgourd.png",
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).size.width,
+                              height: 220,
+                            );
+                          }
+                        }),
                       ),
                       Obx(
                         () => Positioned(
@@ -83,10 +108,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
-                                    child:ClipOval(
+                                    child: ClipOval(
                                       child: Obx(
-                                            () {
-                                          final imageUrl = profileController.Avatar.toString();
+                                        () {
+                                          final imageUrl = profileController
+                                              .Avatar.toString();
 
                                           if (imageUrl.startsWith('http')) {
                                             // Đây là một URL hợp lệ
@@ -108,7 +134,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         },
                                       ),
                                     ),
-
                                   ),
                                 ),
                               ),
@@ -352,6 +377,24 @@ void _pickImage(BuildContext context, ImageSource source) async {
       MaterialPageRoute(
         builder: (context) =>
             DisplaySelectedImagePage(imagePath: pickedImage.path),
+      ),
+    );
+  }
+}
+
+void _pickImageBackGroud(BuildContext context, ImageSource source, String Name,
+    String Avatar) async {
+  XFile? pickedImage = await ImagePicker().pickImage(source: source);
+
+  if (pickedImage != null) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DisplayBackGroudImagePage(
+          imagePath: pickedImage.path,
+          Avatar: Avatar,
+          Name: Name,
+        ),
       ),
     );
   }

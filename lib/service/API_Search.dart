@@ -23,8 +23,9 @@ class API_Search
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
         ApiReponse<List<UserEnity>> listPost = ApiReponse<List<UserEnity>>.fromJson(
-          responseData,
+          utf8Data,
               (dynamic json) => List<UserEnity>.from(json.map((x) => UserEnity.fromJson(x))),
         );
         return listPost.payload;

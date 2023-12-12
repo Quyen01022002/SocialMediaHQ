@@ -121,7 +121,7 @@ class _ItemInviteState extends State<ItemFollow> {
                                       stateFriend = true;
                                     });
                                     myController
-                                        .unFriends(widget.friends.user_id);
+                                        .unFriends(widget.friends.idFriends);
                                   },
                                   child: Padding(
                                     padding:
