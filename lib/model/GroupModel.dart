@@ -23,17 +23,17 @@ class GroupModel {
   factory GroupModel.fromJson(Map<String, dynamic> json){
     //final user = UserMember.fromJson(json['adminId']);
     List<UserMember> listUser = [];
-    if (json['payload']['groupMembers'] == null)
+    if (json['groupMembers'] == null)
       listUser= [];
     else
-      listUser = (json['payload']['groupMembers'] as List)
+      listUser = (json['groupMembers'] as List)
     .map((item) => UserMember.fromJson(item)).toList();
     return GroupModel(
-      id: json['payload']['id'] ?? 0,
-        createdDate: json['payload']['createdAt'] != null ? DateTime.parse(json['payload']['createdAt']) : null,
-        updatedDate: json['payload']['updatedAt'] != null ? DateTime.parse(json['payload']['updatedAt']) : null,
-      description: json['payload']['description'] ?? '',
-      name: json['payload']['name'] ?? '',
+      id: json['id'] ?? 0,
+        createdDate: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+        updatedDate: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      description: json['description'] ?? '',
+      name: json['name'] ?? '',
       listMembers: listUser
     );
 
@@ -62,12 +62,12 @@ class UserMember {
 
   factory UserMember.fromJson(Map<String, dynamic> json) {
     return UserMember(
-      id: json['id'] ?? 0,
-      firstName: json['firstName'] ?? "",
-      lastName: json['lastName'] ?? "",
-      phone: json['phone'] ?? "" ,
-      email: json['email'] ?? "",
-      profilePicture: json['profilePicture'] ?? "",
+      id: json['user']['id'] ?? 0,
+      firstName: json['user']['firstName'] ?? "",
+      lastName: json['user']['lastName'] ?? "",
+      phone: json['user']['phone'] ?? "" ,
+      email: json['user']['email'] ?? "",
+      profilePicture: json['user']['profilePicture'] ?? "",
     );
 
   }

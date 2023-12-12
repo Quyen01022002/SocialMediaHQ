@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
 import 'package:socialmediahq/controller/LoginController.dart';
 import 'package:socialmediahq/controller/ProfileController.dart';
 import 'package:socialmediahq/service/UserProvider.dart';
 import 'package:socialmediahq/service/googleLogin.dart';
+import 'package:socialmediahq/view/Group/HomeGroup.dart';
 import 'package:socialmediahq/view/Group/group_screen.dart';
 import 'package:socialmediahq/view/Page/HomePage.dart';
 import 'package:socialmediahq/view/Settings/ProfileScreen.dart';
@@ -23,7 +25,7 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   ProfileController settingController = Get.put(ProfileController());
-
+  HomeGroupController homeGroupController = Get.put(HomeGroupController());
   @override
   Widget build(BuildContext context) {
     // final userProvider = Provider.of<UserProvider>(context);
@@ -216,13 +218,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeft,
-                                child: GroupScreen(),
-                              ),
-                            );
+                            homeGroupController.loadHomeGroupScreen(context);
                           },
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 8, 6, 0),
