@@ -15,7 +15,7 @@ class CreatePostController extends GetxController {
 
   void createpost(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('userId') ?? 0;
+    final userId = prefs.getInt('id') ?? 0;
 
     PostEntity userEnity = PostEntity(
         user_id: userId,
@@ -23,7 +23,7 @@ class CreatePostController extends GetxController {
         timestamp: DateTime.now(),
         status: "");
     final token = prefs.getString('token') ?? "";
-   await API_Post.post(userEnity,imagePaths.value,token);
+   await API_Post.post(userEnity,imagePaths.value,token,0);
 
     Future.delayed(Duration(milliseconds: 100), () {
       Navigator.pushReplacement(
@@ -31,5 +31,48 @@ class CreatePostController extends GetxController {
         MaterialPageRoute(builder: (context) => DashBoard()),
       );
     });
+  }
+  void createpostGroup(BuildContext context,int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+
+    PostEntity userEnity = PostEntity(
+        user_id: userId,
+        content_post: textControllerContent.text,
+        timestamp: DateTime.now(),
+        status: "");
+    final token = prefs.getString('token') ?? "";
+    await API_Post.post(userEnity,imagePaths.value,token,id);
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => DashBoard()),
+      );
+    });
+  }
+  void updatePost(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+
+    PostEntity userEnity = PostEntity(
+        user_id: userId,
+        content_post: textControllerContent.text,
+        timestamp: DateTime.now(),
+        status: "");
+    final token = prefs.getString('token') ?? "";
+   await API_Post.upatePost(userEnity,imagePaths.value,token);
+
+    Future.delayed(Duration(milliseconds: 100), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => DashBoard()),
+      );
+    });
+  }
+  void delete(int? postId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+    API_Post.deletePost(postId, token);
   }
 }

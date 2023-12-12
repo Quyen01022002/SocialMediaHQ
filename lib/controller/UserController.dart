@@ -38,6 +38,6 @@ class UserController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
     final userId = prefs.getInt('id') ?? 0;
-    API_Friend.unFriends(userId,friendID, token);
+    API_Friend.unFriends(friendID, token);
   }
 }

@@ -10,9 +10,8 @@ class DatePickerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CupertinoApp(
-      home: DatePickerExample(),
-      debugShowCheckedModeBanner: false,
+    return Scaffold(
+      body: DatePickerExample(),
     );
   }
 }

@@ -18,7 +18,15 @@ class UpdateUserController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id') ?? 0;
     final token = prefs.getString('token') ?? "";
-    API_Profile.updateAvatar(userId,token,imagePath.value);
+    await API_Profile.updateAvatar(userId,token,imagePath.value);
+
+
+  }
+  void UpdateBack(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+    final token = prefs.getString('token') ?? "";
+    await API_Profile.updateBackGround(userId,token,imagePath.value);
 
 
   }

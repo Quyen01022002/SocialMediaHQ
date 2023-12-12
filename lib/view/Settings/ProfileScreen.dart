@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,9 +5,11 @@ import 'package:page_transition/page_transition.dart';
 import 'package:socialmediahq/component/Post/Home_Post.dart';
 import 'package:socialmediahq/controller/ProfileController.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
+import 'package:socialmediahq/view/Settings/DisplayBackGroudImagePage.dart';
 import 'package:socialmediahq/view/Settings/chooseimage.dart';
 
 import 'DisplaySelectedImagePage.dart';
+import 'EditProfileScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -17,7 +18,8 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
+class _ProfileScreenState extends State<ProfileScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool isFriend = false;
   double opacity = 0.0;
@@ -51,84 +53,174 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
                     children: [
-                      Image.asset(
-                        "assets/images/backgourd.png",
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
-                        height: 220,
+                      GestureDetector(
+                        onTap: () {
+                          final Name = profileController.fisrt_name.toString() +
+                              " " +
+                              profileController.last_name.toString();
+                          _pickImageBackGroud(context, ImageSource.gallery,
+                              Name, profileController.Avatar.toString());
+                        },
+                        child: Obx(() {
+                          final imageUrl =
+                              profileController.BackGround.toString();
+                          if (imageUrl.startsWith('http')) {
+                            // Đây là một URL hợp lệ
+                            return Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).size.width,
+                              height: 220,
+                            );
+                          } else {
+                            // Đây có thể là đường dẫn cục bộ
+                            return Image.asset(
+                              "assets/images/backgourd.png",
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).size.width,
+                              height: 220,
+                            );
+                          }
+                        }),
                       ),
-                      Obx(() =>Positioned(
-                        bottom: 10,
-                        left: 30,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(500),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    spreadRadius: 1,
-                                    blurRadius: 5,
-                                  ),
-                                ],
-                              ),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _pickImage(context,ImageSource.gallery);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: ClipOval(
-                                    child: Image.network(
-                                      profileController.Avatar.toString(),
-                                      width: 120,
-                                      height: 120,
-                                      fit: BoxFit.cover,
+                      Obx(
+                        () => Positioned(
+                          bottom: 10,
+                          left: 30,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(500),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                    ),
+                                  ],
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _pickImage(context, ImageSource.gallery);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: ClipOval(
+                                      child: Obx(
+                                        () {
+                                          final imageUrl = profileController
+                                              .Avatar.toString();
+
+                                          if (imageUrl.startsWith('http')) {
+                                            // Đây là một URL hợp lệ
+                                            return Image.network(
+                                              imageUrl,
+                                              width: 120,
+                                              height: 120,
+                                              fit: BoxFit.cover,
+                                            );
+                                          } else {
+                                            // Đây có thể là đường dẫn cục bộ
+                                            return Image.asset(
+                                              "assets/images/backgourd.png",
+                                              width: 120,
+                                              height: 120,
+                                              fit: BoxFit.cover,
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Obx(() =>Text(
-                                profileController.fisrt_name.toString() + " " + profileController.last_name.toString(),
+                              Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Obx(
+                                    () => Text(
+                                      profileController.fisrt_name.toString() +
+                                          " " +
+                                          profileController.last_name
+                                              .toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  )),
+                              Text(
+                                "Hồ Chí Minh, Việt Nam",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                  color: Colors.grey,
+                                  fontSize: 14,
                                 ),
-                              ),)
-                            ),
-                            Text(
-                              "Hồ Chí Minh, Việt Nam",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
-                              child: Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(26, 16, 0, 0),
+                              InkWell(
+                                onTap: () {
+                                  // Add your navigation logic here
+                                  // For example, navigate to the edit profile page
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfileScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      _buildStat(profileController.post.toString(), 'Bài Viết'),
-                                      _buildStat(profileController.follow.toString(), 'Người Theo Dõi'),
-                                      _buildStat(profileController.following.toString(), 'Đang Theo Dõi'),
+                                      Icon(Icons.edit, color: Colors.blue),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Chỉnh sửa thông tin',
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                                child: Container(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(26, 16, 0, 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        _buildStat(
+                                            profileController.post.toString(),
+                                            'Bài Viết'),
+                                        _buildStat(
+                                            profileController.follow.toString(),
+                                            'Người Theo Dõi'),
+                                        _buildStat(
+                                            profileController.following
+                                                .toString(),
+                                            'Đang Theo Dõi'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ), )
-
+                      )
                     ],
                   ),
                 ),
@@ -163,7 +255,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     controller: _tabController,
                     children: [
                       Obx(() => _buildTabPost('Nội dung cho Tab Bài Viết')),
-                      Obx(() => _buildTabContent(profileController.listFriends),)
+                      Obx(
+                        () => _buildTabContent(profileController.listFriends),
+                      )
                     ],
                   ),
                 ),
@@ -196,7 +290,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   Widget _buildTabPost(String content) {
     print("Số bài đăng: ${profileController.listPost.length}");
     return Container(
-      height: MediaQuery.of(context).size.height - 340, // Điều chỉnh chiều cao theo cần thiết
+      height: MediaQuery.of(context).size.height -
+          340, // Điều chỉnh chiều cao theo cần thiết
       child: ListView.builder(
         itemCount: profileController.listPost.length,
         itemBuilder: (context, index) {
@@ -258,7 +353,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         ],
       ),
     );
-
   }
 
   Widget _buildStat(String value, String label) {
@@ -272,8 +366,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       ],
     );
   }
-
 }
+
 void _pickImage(BuildContext context, ImageSource source) async {
   XFile? pickedImage = await ImagePicker().pickImage(source: source);
 
@@ -281,10 +375,27 @@ void _pickImage(BuildContext context, ImageSource source) async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DisplaySelectedImagePage(imagePath: pickedImage.path),
+        builder: (context) =>
+            DisplaySelectedImagePage(imagePath: pickedImage.path),
       ),
     );
   }
 }
 
+void _pickImageBackGroud(BuildContext context, ImageSource source, String Name,
+    String Avatar) async {
+  XFile? pickedImage = await ImagePicker().pickImage(source: source);
 
+  if (pickedImage != null) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DisplayBackGroudImagePage(
+          imagePath: pickedImage.path,
+          Avatar: Avatar,
+          Name: Name,
+        ),
+      ),
+    );
+  }
+}

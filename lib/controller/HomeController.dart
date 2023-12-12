@@ -18,7 +18,6 @@ class HomeController extends GetxController {
   {
     try {
       final prefs = await SharedPreferences.getInstance();
-
       isloaded(true);
       final userId = prefs.getInt('id') ?? 0;
       final token = prefs.getString('token') ?? "";
@@ -45,6 +44,20 @@ class HomeController extends GetxController {
       final userId = prefs.getInt('id') ?? 0;
       final token = prefs.getString('token') ?? "";
      await API_Post.Liked(token,postid.value,userId);
+    }
+    finally
+    {
+      isloaded(false);
+    }
+  }
+  void DeletePost() async
+  {
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      API_Post.deletePost(postid.value,token);
     }
     finally
     {

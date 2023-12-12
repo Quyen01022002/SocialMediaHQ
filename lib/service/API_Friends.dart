@@ -25,8 +25,9 @@ class API_Friend {
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
         ApiReponse<List<UserEnity>> listPost = ApiReponse<List<UserEnity>>.fromJson(
-          responseData,
+          utf8Data,
               (dynamic json) => List<UserEnity>.from(json.map((x) => UserEnity.fromJson(x))),
         );
         return listPost.payload;
@@ -49,8 +50,9 @@ class API_Friend {
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
         ApiReponse<List<UserEnity>> listPost = ApiReponse<List<UserEnity>>.fromJson(
-          responseData,
+          utf8Data,
               (dynamic json) => List<UserEnity>.from(json.map((x) => UserEnity.fromJson(x))),
         );
         return listPost.payload;
@@ -73,8 +75,9 @@ class API_Friend {
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
         ApiReponse<List<UserEnity>> listPost = ApiReponse<List<UserEnity>>.fromJson(
-          responseData,
+          utf8Data,
               (dynamic json) => List<UserEnity>.from(json.map((x) => UserEnity.fromJson(x))),
         );
         return listPost.payload;
@@ -105,9 +108,9 @@ class API_Friend {
 
 
   }
-  static void unFriends(int? userid,int? friendid,String token) async {
+  static void unFriends(int? userid,String token) async {
     await http.delete(
-      Uri.parse('$baseUrl/friends/unfriend?userId=$userid&friendsId=$friendid'),
+      Uri.parse('$baseUrl/friends/unfriend?userId=$userid'),
       headers: {
         'Authorization': 'Bearer $token',
       },

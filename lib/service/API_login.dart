@@ -39,6 +39,26 @@ class API_login
       return null;
     }
   }
+  static void fcm(int? userid,String token,String fcm) async {
+    final url = Uri.parse('$baseUrl/user/fcm/$userid');
+
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',};
+
+// Tạo một Map chứa dữ liệu người dùng
+    final data = {
+      "fcm":fcm,
+
+    };
+
+    await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+
+  }
 
 
 }
