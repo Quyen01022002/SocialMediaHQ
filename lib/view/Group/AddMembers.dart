@@ -31,7 +31,7 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
     User(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
     User(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
   ];
-  final List<User> users =[];
+  List<User> users =[];
   List<User> searchResults = [];
 
   void onSearch(String keyword) {
@@ -49,7 +49,6 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
     homeGroupController.loadFriends;
   }
   Future<void> _mapUserMemberToUser() async {
-
     if (homeGroupController.users!= null) {
       homeGroupController.users!.forEach((element) {
         User user = User(element.id, element.firstName + " " + element.lastName,
@@ -111,7 +110,7 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
                         children: [
                           ListTile(
                             leading: CircleAvatar(
-                              backgroundImage: AssetImage(searchResults.isEmpty
+                              backgroundImage: NetworkImage(searchResults.isEmpty
                                   ? users[index].avatar
                                   : searchResults[index].avatar),
                             ),
@@ -155,7 +154,14 @@ class _AddMembersGroupState extends State<AddMembersGroup> {
           child: Container(
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                List<User> selectedUsers = users.where((user) => user.check).toList();
+                homeGroupController.addSelectedMembers(context, selectedUsers);
+                selectedUsers = [];
+                users = [];
+                Future.delayed(Duration(milliseconds: 100), () {
+                  int count =0;
+                  Navigator.of(context).popUntil((_) => count++ >= 1);
+                });
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF8587F1),

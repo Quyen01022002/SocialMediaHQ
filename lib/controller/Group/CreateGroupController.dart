@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
+import 'package:socialmediahq/model/GroupMemberRequest.dart';
 import 'package:socialmediahq/model/GroupModel.dart';
 import 'package:socialmediahq/view/Group/HomeGroup.dart';
 import 'package:socialmediahq/view/Group/group_screen.dart';
@@ -14,6 +16,7 @@ class GroupController extends GetxController{
   final desc = RxString('');
   final nameGroup = RxString('');
 
+  HomeGroupController homeGroupController = Get.put(HomeGroupController());
   void CreateGroup(BuildContext context) async{
     final description = textControllerMota.text;
     final name_group = textControllerNameGroup.text;
@@ -30,14 +33,14 @@ class GroupController extends GetxController{
     );
 
     final token = prefs.getString('token')??"";
-    await API_Group.addGroup(newGroup, token);
-
-    Future.delayed(Duration(milliseconds: 300), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeGroup()),
-      );
-    });
+    GroupModel? groupModel = await API_Group.addGroup(newGroup, token);
+    GroupMemberRequest groupMemberRequest = GroupMemberRequest(
+        user_id: adminId,
+        group_id: groupModel?.id);
+    List<GroupMemberRequest>? members = [];
+    members.add(groupMemberRequest);
+    await API_Group.addMembersToGroup(token, members);
+    homeGroupController.GetOneGroup(context, 9);
 
 
   }

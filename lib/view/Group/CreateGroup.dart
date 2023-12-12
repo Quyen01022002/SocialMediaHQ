@@ -5,6 +5,7 @@ import 'package:socialmediahq/controller/Group/CreateGroupController.dart';
 import 'package:socialmediahq/view/Group/HomeGroup.dart';
 
 import '../../component/Home_Header.dart';
+import '../../controller/Group/HomeGroupController.dart';
 
 class CreateGroup extends StatefulWidget {
   const CreateGroup({super.key});
@@ -14,7 +15,7 @@ class CreateGroup extends StatefulWidget {
 }
 
 class _CreateGroupState extends State<CreateGroup> {
-  final GroupController myController = Get.put(GroupController());
+  final HomeGroupController myController = Get.put(HomeGroupController());
 
 
 
