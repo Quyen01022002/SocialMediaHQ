@@ -4,8 +4,8 @@ import 'package:socialmediahq/model/InteractionsEnity.dart';
 import 'package:socialmediahq/service/API_Friends.dart';
 import 'package:socialmediahq/service/API_Post.dart';
 
-import '../model/PostModel.dart';
 import '../model/UsersEnity.dart';
+
 
 
 class FriendController extends GetxController {

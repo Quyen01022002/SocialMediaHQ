@@ -86,25 +86,25 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: ClipOval(
-                                    child: Image.network(
+                                    child: Obx(() => Image.network(
                                       profileController.Avatar.toString(),
                                       width: 120,
                                       height: 120,
                                       fit: BoxFit.cover,
-                                    ),
+                                    ),)
                                   ),
                                 ),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
+                              child: Obx(() => Text(
                                 profileController.fisrt_name.toString() + " " + profileController.last_name.toString(),
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                 ),
-                              ),
+                              ),)
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +187,7 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
                     controller: _tabController,
                     children: [
                       Obx(() => _buildTabPost('Nội dung cho Tab Bài Viết')),
-                      Obx(() => _buildTabContent(profileController.listFriends),)
+                      _buildTabContent(profileController.listFriends),
                     ],
                   ),
                 ),
@@ -232,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
   }
 
   Widget _buildTabContent(List<UserEnity> friendList) {
-    return GridView.builder(
+    return Obx(() => GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3, // Số lượng cột
         crossAxisSpacing: 8.0, // Khoảng cách giữa các cột
@@ -242,7 +242,7 @@ class _ProfileScreenState extends State<ProfileScreenOther> with SingleTickerPro
       itemBuilder: (BuildContext context, int index) {
         return _buildFriendItem(friendList[index]);
       },
-    );
+    ),);
   }
 
   Widget _buildFriendItem(UserEnity friend) {

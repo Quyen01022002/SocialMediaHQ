@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:socialmediahq/model/NoticationsModel.dart';
 
-class NotificationItem extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String time;
-  final bool isRead;
+import '../../controller/DashBoardController.dart';
+
+class NotificationItem extends StatefulWidget {
+  final NoticationsModel noticationsModel;
 
   NotificationItem({
-    required this.title,
-    required this.subtitle,
-    required this.time,
-    this.isRead = false,
+    required this.noticationsModel,
   });
+
+  @override
+  _NotificationItemState createState() => _NotificationItemState();
+}
+
+class _NotificationItemState extends State<NotificationItem> {
+  final NoticationsController myController = Get.put(NoticationsController());
+  late String formattedTime;
+  late bool isRead=false;
+
+  @override
+  void initState() {
+    super.initState();
+    formattedTime = formatTimeDifference(widget.noticationsModel.timeStamp);
+    isRead=widget.noticationsModel.isRead;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +40,26 @@ class NotificationItem extends StatelessWidget {
           color: Colors.white,
         ),
       ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: isRead ? Colors.black : Colors.blue,
+      title: GestureDetector(
+
+        onTap: ()
+        {
+          print(widget.noticationsModel.isRead);
+          myController.readNotifications(widget.noticationsModel.id);
+          setState(() {
+            isRead=true;
+          });
+        },
+        child: Text(
+          widget.noticationsModel.contentNotications,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isRead ? Colors.black : Colors.blue,
+          ),
         ),
       ),
       subtitle: Text(
-        subtitle,
+        "Kiểm tra bạn bè của bạn",
         style: TextStyle(
           color: isRead ? Colors.grey : Colors.black,
         ),
@@ -42,12 +68,12 @@ class NotificationItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            time,
+            formattedTime,
             style: TextStyle(
               color: isRead ? Colors.grey : Colors.blue,
             ),
           ),
-          if (!isRead)
+          if (isRead==false)
             Container(
               padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               decoration: BoxDecoration(
@@ -68,5 +94,26 @@ class NotificationItem extends StatelessWidget {
         // Add your logic for handling tap on the notification item
       },
     );
+  }
+}
+String formatTimeDifference(String timeStamp) {
+  DateTime dateTime = DateTime.parse(timeStamp);
+  DateTime now = DateTime.now();
+  Duration difference = now.difference(dateTime);
+
+  if (difference.inDays > 30) {
+    return DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
+  } else if (difference.inDays >= 1) {
+    return '${difference.inDays} ngày trước';
+  } else if (difference.inHours > 0) {
+    if (difference.inMinutes > 0) {
+      return '${difference.inHours} giờ';
+    } else {
+      return '${difference.inHours} giờ trước';
+    }
+  } else if (difference.inMinutes > 0) {
+    return '${difference.inMinutes} phút trước';
+  } else {
+    return "Bây giờ";
   }
 }

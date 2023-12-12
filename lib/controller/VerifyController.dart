@@ -8,11 +8,11 @@ import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/service/API_dangky.dart';
 import 'package:socialmediahq/view/authen/Login_screen.dart';
 
-import '../model/AuthenticationResponse.dart';
-import '../request/RegisterRequest.dart';
-import '../view/authen/SignUpdateUser.dart';
-import '../view/authen/verify_screen.dart';
-import '../view/dashboard/DashBoard.dart';
+import '../../model/AuthenticationResponse.dart';
+import '../../request/RegisterRequest.dart';
+import '../../view/authen/SignUpdateUser.dart';
+import '../../view/authen/verify_screen.dart';
+import '../../view/dashboard/DashBoard.dart';
 
 class VerifyController extends GetxController {
 

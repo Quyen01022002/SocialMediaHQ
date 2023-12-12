@@ -61,6 +61,28 @@ class API_Post {
       body: jsonEncode(data),
     );
   }
+  static Future<PostEntity?> upatePost(
+      PostEntity post, List<String> img, String token) async {
+    final url = Uri.parse('$baseUrl/post/update');
+
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    List<Map<String, String>> listAnh =
+    img.map((imageUrl) => {'linkPicture': imageUrl}).toList();
+
+    final Map<String, dynamic> data = {
+      "contentPost": post.content_post,
+      "listAnh": listAnh,
+    };
+
+    await http.put(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+  }
 
   static Future<InteractionsEntity?> Liked(String token, int postid,int userId) async {
     final url = Uri.parse('$baseUrl/interations?post=$postid&user=$userId');
@@ -106,5 +128,15 @@ class API_Post {
     } else {
       return null;
     }
+  }
+  static void deletePost(int? postid, String token) async {
+    await http.delete(
+      Uri.parse('$baseUrl/post/$postid'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+
   }
 }

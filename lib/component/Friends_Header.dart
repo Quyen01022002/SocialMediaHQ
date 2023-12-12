@@ -30,6 +30,7 @@ class FriendHeader extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      print("Dô");
                       Navigator.push(
                         context,
                         PageTransition(
@@ -39,11 +40,14 @@ class FriendHeader extends StatelessWidget {
                       );
                     },
                     child:
-                    Text(
-                      "Bạn bè",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Bạn bè",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

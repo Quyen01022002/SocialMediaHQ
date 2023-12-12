@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialmediahq/component/Post/update_post.dart';
 import 'package:socialmediahq/controller/HomeController.dart';
 import 'package:socialmediahq/model/PostModel.dart';
 import 'package:socialmediahq/view/Comments/CommentHome.dart';
@@ -21,8 +24,10 @@ class Home_Post extends StatefulWidget {
 class _Home_PostState extends State<Home_Post> {
   late bool statelike=false;
   late int contlike=0;
+  late RxInt curnetUser=0.obs;
   late String formattedTime = '';
   HomeController home_postcontroller = new HomeController();
+
 
   @override
   void initState() {
@@ -30,8 +35,13 @@ class _Home_PostState extends State<Home_Post> {
     statelike = widget.postModel.user_liked;
     formattedTime = formatTimeDifference(widget.postModel.timeStamp);
     contlike=widget.postModel.like_count;
+    initCurrentUser();
   }
 
+  void initCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    curnetUser = (prefs.getInt('id') ?? 0).obs;
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -97,7 +107,8 @@ class _Home_PostState extends State<Home_Post> {
                   ),
                   GestureDetector(
                     onTap: (){
-
+                      curnetUser==widget.postModel.createBy.id?
+                      _showBottomSheet(context,widget.postModel,home_postcontroller):(print(""+ curnetUser.toString()+"id"+widget.postModel.createBy.id.toString()));
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(right: 16.0),
@@ -257,3 +268,74 @@ class _Home_PostState extends State<Home_Post> {
     }
   }
 }
+void _showBottomSheet(BuildContext context,PostModel post,HomeController home_postcontroller) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext builderContext) {
+      return Container(
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.update),
+              title: Text('Chỉnh sửa bái viết'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeft,
+                    child: UpdatePost(statepost: false,
+                      postModel: post,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.delete),
+              title: Text('Xóa bài viết'),
+              onTap: () {
+                _showDeleteConfirmationDialog(context,post,home_postcontroller);
+              },
+            ),
+            // Add more items as needed
+          ],
+        ),
+      );
+    },
+  );
+}
+void _showDeleteConfirmationDialog(BuildContext context, PostModel post,HomeController home_postcontroller) {
+  showDialog(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        title: Text('Xác nhận xóa bài viết'),
+        content: Text('Bạn có chắc chắn muốn xóa bài viết này không?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(); // Đóng hộp thoại
+            },
+            child: Text(
+              'Hủy',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              home_postcontroller.postid.value =
+                  post.id;
+              home_postcontroller.DeletePost();
+              Navigator.of(dialogContext).pop(); // Đóng hộp thoại
+            },
+            child: Text(
+              'Xóa',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+

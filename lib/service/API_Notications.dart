@@ -18,6 +18,7 @@ class API_Notications {
       Uri.parse('$baseUrl/notifications/$userid'),
       headers: {
         'Authorization': 'Bearer $token',
+        'Accept-Charset': 'UTF-8',
       },
     );
 
@@ -25,9 +26,10 @@ class API_Notications {
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
         ApiReponse<List<NoticationsModel>> listPost =
             ApiReponse<List<NoticationsModel>>.fromJson(
-          responseData,
+              utf8Data,
           (dynamic json) =>
               List<NoticationsModel>.from(json.map((x) => NoticationsModel.fromJson(x))),
         );
@@ -39,6 +41,44 @@ class API_Notications {
       return null;
     }
   }
+  static Future<List<NoticationsModel>?> LoadNoticationsRead(int userid, String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/notifications/reads/$userid'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept-Charset': 'UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = response.body;
+
+      if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
+
+        ApiReponse<List<NoticationsModel>> listPost =
+        ApiReponse<List<NoticationsModel>>.fromJson(
+          utf8Data,
+              (dynamic json) => List<NoticationsModel>.from(
+              json.map((x) => NoticationsModel.fromJson(x))),
+        );
+
+        return listPost.payload;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+  static void readNotification(int? notiId, String token) async {
+    await http.post(
+      Uri.parse('$baseUrl/notifications/read/$notiId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
 
+  }
 }

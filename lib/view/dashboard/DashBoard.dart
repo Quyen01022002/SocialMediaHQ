@@ -24,14 +24,15 @@ class _DashBoardState extends State<DashBoard> {
     WatchScreen(),
     NotificationScreen(),
     SettingScreen()
-
   ];
   final PageStorageBucket buket = PageStorageBucket();
+
   @override
   void initState() {
     super.initState();
-    myController.loadNotications();
+    myController.loadNoticationsIsRead();
   }
+
   @override
   Widget build(BuildContext context) {
     Widget currentScreen = screens[currentTab];
@@ -49,7 +50,9 @@ class _DashBoardState extends State<DashBoard> {
             context,
             PageTransition(
               type: PageTransitionType.bottomToTop,
-              child: CreatePost(statepost: false,),
+              child: CreatePost(
+                statepost: false,
+              ),
             ),
           );
         },
@@ -68,27 +71,30 @@ class _DashBoardState extends State<DashBoard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     MaterialButton(
-                        minWidth: 40,
-                        onPressed: () {
-                          setState(() {
-
-                            currentTab = 0;
-                            currentScreen = HomeScreen();
-                          });
-                        },
-                        child:Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.dashboard,
-                              color:currentTab== 0? Colors.blue:Colors.grey,
-                             ),
-                             Text("Home",style: TextStyle(color:currentTab ==0? Colors.blue:Colors.grey,),
-                             ),
-
-                          ],
-                        ),
-                        ),
+                      minWidth: 40,
+                      onPressed: () {
+                        setState(() {
+                          currentTab = 0;
+                          currentScreen = HomeScreen();
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.dashboard,
+                            color: currentTab == 0 ? Colors.blue : Colors.grey,
+                          ),
+                          Text(
+                            "Home",
+                            style: TextStyle(
+                              color:
+                                  currentTab == 0 ? Colors.blue : Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     MaterialButton(
                       minWidth: 40,
                       onPressed: () {
@@ -97,16 +103,20 @@ class _DashBoardState extends State<DashBoard> {
                           currentScreen = screens[currentTab];
                         });
                       },
-                      child:Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.people,
-                            color:currentTab== 1? Colors.blue:Colors.grey,
+                            color: currentTab == 1 ? Colors.blue : Colors.grey,
                           ),
-                          Text("Friends",style: TextStyle(color:currentTab ==1? Colors.blue:Colors.grey,),
+                          Text(
+                            "Friends",
+                            style: TextStyle(
+                              color:
+                                  currentTab == 1 ? Colors.blue : Colors.grey,
+                            ),
                           ),
-
                         ],
                       ),
                     ),
@@ -120,21 +130,43 @@ class _DashBoardState extends State<DashBoard> {
                       onPressed: () {
                         setState(() {
                           currentTab = 2;
-                          currentScreen=screens[currentTab];
+                          currentScreen = screens[currentTab];
                         });
                       },
-                      child:Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          badges.Badge(
-                            badgeContent: Text(myController.listNoticaiotns.length<=99?myController.listNoticaiotns.length.toString():'99+',style: TextStyle(color: Colors.white,fontSize:8),),
-                            child: Icon(
-                              Icons.notifications,
-                              color:currentTab== 2? Colors.blue:Colors.grey,
+                          myController.listNoticaiotnsIsRead.length <= 0
+                              ? badges.Badge(
+                                  badgeContent: Text(
+                                    myController.listNoticaiotnsIsRead.length <=
+                                            99
+                                        ? myController
+                                            .listNoticaiotnsIsRead.length
+                                            .toString()
+                                        : '99+',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 8),
+                                  ),
+                                  child: Icon(
+                                    Icons.notifications,
+                                    color: currentTab == 2
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.notifications,
+                                  color: currentTab == 2
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                ),
+                          Text(
+                            "Notification",
+                            style: TextStyle(
+                              color:
+                                  currentTab == 2 ? Colors.blue : Colors.grey,
                             ),
-                          ),
-
-                          Text("Notification",style: TextStyle(color:currentTab ==2? Colors.blue:Colors.grey,),
                           ),
                         ],
                       ),
@@ -143,21 +175,24 @@ class _DashBoardState extends State<DashBoard> {
                       minWidth: 40,
                       onPressed: () {
                         setState(() {
-
                           currentTab = 3;
-                          currentScreen=screens[currentTab];
+                          currentScreen = screens[currentTab];
                         });
                       },
-                      child:Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.menu,
-                            color:currentTab== 3? Colors.blue:Colors.grey,
+                            color: currentTab == 3 ? Colors.blue : Colors.grey,
                           ),
-                          Text("Profiles",style: TextStyle(color:currentTab ==3? Colors.blue:Colors.grey,),
+                          Text(
+                            "Profiles",
+                            style: TextStyle(
+                              color:
+                                  currentTab == 3 ? Colors.blue : Colors.grey,
+                            ),
                           ),
-
                         ],
                       ),
                     ),

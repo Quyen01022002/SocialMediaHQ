@@ -6,6 +6,8 @@ import 'package:socialmediahq/view/dashboard/DashBoard.dart';
 
 import '../../controller/VerifyController.dart';
 
+
+
 class VerifyScreen extends StatefulWidget {
   final bool animated;
 

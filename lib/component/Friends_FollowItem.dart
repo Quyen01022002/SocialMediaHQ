@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:socialmediahq/controller/UserController.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
+import 'package:socialmediahq/service/SendMessage.dart';
 
 import '../controller/FriendsController.dart';
 import '../view/Settings/ProfileScreenOther.dart';
@@ -102,6 +103,7 @@ class _ItemInviteState extends State<ItemFollow> {
                                     setState(() {
                                       stateFriend = true;
                                     });
+                                    sendFriendRequestNotification("dAJ6qbMRS32nP4rYUgDcqZ:APA91bHNsRXeb3jCcIR1DepEZRKqMPznbZqknhk0xIL_iAul3sRlR-HNk7tD446nJdxL1ddSXBeH6XteS1B62C0cFiGIgghKsfnzLyk3PcvQWUBNA_zgmui0uo5iGXCATT7ufpJ1ji8K");
                                     myController
                                         .addFriends(widget.friends.user_id);
                                   },
