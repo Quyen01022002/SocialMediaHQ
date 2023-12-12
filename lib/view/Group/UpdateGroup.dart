@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
 
 class UpdateGroup extends StatefulWidget {
   const UpdateGroup({super.key});
@@ -11,6 +13,7 @@ class UpdateGroup extends StatefulWidget {
 }
 
 class _UpdateGroupState extends State<UpdateGroup> {
+  HomeGroupController homeGroupController = Get.put(HomeGroupController());
   File? _selectedImage;
 
   Future<void> _pickImage() async {
@@ -22,6 +25,11 @@ class _UpdateGroupState extends State<UpdateGroup> {
         _selectedImage = File(pickedFile.path);
       });
     }
+  }
+  @override
+  void initState() {
+    super.initState();
+    homeGroupController.getInfoGroupToUpdate(context);
   }
 
   @override
@@ -51,7 +59,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Hãy đặt một cái tên nhóm thật là ngầu nào!',
+                      Text('Đổi lại tên nhóm ư? Tên độc đáo hơn nhé!',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -59,7 +67,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                       ),
                       const SizedBox(height: 16),
                       TextField(
-
+                        controller: homeGroupController.textControllerNameGroupUpdate,
                         decoration: const InputDecoration(
                           labelText: 'Tên nhóm',
                           border: OutlineInputBorder(
@@ -88,6 +96,7 @@ class _UpdateGroupState extends State<UpdateGroup> {
                         height: 200.0, // Điều chỉnh chiều cao của TextField
                         width: 320.0, // Điều chỉnh độ rộng của TextField
                         child: TextField(
+                          controller: homeGroupController.textControllerMotaUpdate,
                           textAlign: TextAlign.left,
                           textAlignVertical: TextAlignVertical.top,
                           style: TextStyle(
@@ -111,22 +120,23 @@ class _UpdateGroupState extends State<UpdateGroup> {
                           ),
                         ),
                       ),
-                      if (_selectedImage != null)
-                        Image.file(
-                          _selectedImage!,
-                          width: 200,
-                          height: 200,
-                        ),
-                      ElevatedButton(
-                        onPressed: _pickImage,
-                        child: Text('Chọn ảnh'),
-                      ),
+                      // if (_selectedImage != null)
+                      //   Image.file(
+                      //     _selectedImage!,
+                      //     width: 200,
+                      //     height: 200,
+                      //   ),
+                      // ElevatedButton(
+                      //   onPressed: _pickImage,
+                      //   child: Text('Chọn ảnh'),
+                      // ),
 
                       Container(
                         padding: EdgeInsets.only(top: 100),
                         child: ElevatedButton(
                           onPressed: () {
-
+                                homeGroupController.updateGroup(context);
+                                Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF8587F1),

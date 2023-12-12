@@ -1,7 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
 import 'package:socialmediahq/view/Group/AddMembers.dart';
+import 'package:socialmediahq/view/Group/ListMembersGroup.dart';
+import 'package:socialmediahq/view/Group/UpdateGroup.dart';
+import 'package:socialmediahq/view/Group/group_screen.dart';
+
+import '../../model/GroupModel.dart';
 
 class HomeGroup extends StatefulWidget {
   const HomeGroup({super.key});
@@ -9,19 +16,51 @@ class HomeGroup extends StatefulWidget {
   @override
   State<HomeGroup> createState() => _HomeGroupState();
 }
+class UserAvatar {
+  final int id;
+  final String name;
+  final String avatar;
+  bool check;
 
+  UserAvatar(this.id, this.name, this.avatar, this.check);
+}
 class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMixin {
   final HomeGroupController homeGroupController = Get.put(HomeGroupController());
   late TabController _tabController;
+  final List<UserAvatar> userList = [
+    UserAvatar(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
+    UserAvatar(1,'Trần Bửu Quyến', 'assets/images/google.png', false),
+    UserAvatar(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    UserAvatar(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
+    UserAvatar(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    UserAvatar(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    UserAvatar(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+  ];
+  Stream<GroupModel>? groupCurrent;
+  GroupModel? group;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    _startTimer();
   }
-
-
+  late Timer _timer;
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      // Gọi hàm cần thiết ở đây
+      _loadData();
+      groupCurrent = homeGroupController.groupCurrent; // Đây là Stream mà bạn cần theo dõi
+      // Cập nhật danh sách nhóm khi Stream thay đổi
+      groupCurrent?.listen((GroupModel? currentGroup) {
+        if (currentGroup != null) {
+          setState(() {
+            group = currentGroup;
+          });
+        }
+      });
+    });
+  }
   void _loadData() async{
     await homeGroupController.GetOneGroup;
   }
@@ -29,6 +68,7 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
   @override
   void dispose() {
     _tabController.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -45,138 +85,201 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
             floating: false,
             pinned: true,
             backgroundColor: Color(0xFF8587F1),
-            flexibleSpace: FlexibleSpaceBar(
-              title:
-
-                  Text(
-                    homeGroupController.nameGroup.toString(),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,),
-
-
-              background: Image.asset(
-                'assets/images/backgroud_profile_page.png', // Đặt đường dẫn hình ảnh của bạn ở đây
-                fit: BoxFit.cover,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.more_vert),
+                onPressed: () {
+                  showPopupMenu(context);
+                },
               ),
-
-              titlePadding: EdgeInsets.only(left: 20, bottom: 20),
-
-
+            ],
+            flexibleSpace: StreamBuilder<GroupModel>(
+              stream: groupCurrent ,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return FlexibleSpaceBar(
+                    title: Text(
+                      snapshot.data!.name.toString(),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    background: Image.asset(
+                      'assets/images/backgroud_profile_page.png',
+                      fit: BoxFit.cover,
+                    ),
+                    titlePadding: EdgeInsets.only(left: 20, bottom: 20),
+                  );
+                } else {
+                  return FlexibleSpaceBar(
+                    title: Text(
+                      "Loading...",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    background: Image.asset(
+                      'assets/images/backgroud_profile_page.png',
+                      fit: BoxFit.cover,
+                    ),
+                    titlePadding: EdgeInsets.only(left: 20, bottom: 20),
+                  );
+                }
+              },
             ),
-
-
-
           ),
 
 
-        SliverToBoxAdapter(
+
+          SliverToBoxAdapter(
           child: Container(
             padding: EdgeInsets.all(0),
             child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 100,
-                  padding: EdgeInsets.only(left: 10, top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(bottom: 10),
-                        child: Text('Danh sách thành viên trong nhóm >',
+                StreamBuilder<GroupModel>(
+                  stream: groupCurrent ,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          snapshot.data!.description.toString(),
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          'Loading...',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+            Container(
+              height: 100,
+              padding: EdgeInsets.only(left: 10, top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ListMemberGroup()),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        'Danh sách thành viên trong nhóm >',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                        ),),
+                        ),
                       ),
-                      Row(
-                      children: [
-
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            padding: EdgeInsets.only(left: 5),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  "assets/images/facebook.png",
-                                  width: 40,
-                                  height: 40,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            padding: EdgeInsets.only(left: 5),
-                            child: ClipOval(
-                              child: Image.asset(
-                                "assets/images/google.png",
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            padding: EdgeInsets.only(left: 5),
-                            child: ClipOval(
-                              child: Image.asset(
-                                "assets/images/post1.png",
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            padding: EdgeInsets.only(left: 5),
-                            child: ClipOval(
-                              child: Image.asset(
-                                "assets/images/backgourd.png",
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                      ],
-                      )
-                    ],
+                    ),
                   ),
 
-
-                ),
+                  StreamBuilder <GroupModel>(
+                      stream: groupCurrent ,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                    return Row(
+                      children: [
+                        for (var i = 0; i < snapshot.data!.listMembers.length; i++)
+                          if (i < 5)
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: ClipOval(
+                                  child: Image.network(
+                                    snapshot.data!.listMembers[i].profilePicture,
+                                    width: 40,
+                                    height: 40,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        //if (homeGroupController.listUserMembers!.length > 5)
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => ListMemberGroup()),
+                                          );
+                            },
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: ClipOval(
+                                  child: Container(
+                                    color: Colors.grey, // Màu sẽ hiển thị dấu "xem thêm"
+                                    width: 40,
+                                    height: 40,
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );}
+                      else{
+                      return Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          'Loading members...',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      );}
+                      }
+                  ),
+                ],
+              ),
+            ),
 
                 Container(
                   padding: EdgeInsets.only(left: 20),
                   child: Row(
                     children: [
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-
-                              backgroundColor: Color(0xFF8587F1),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(10,10,10,10),
-                              child: Text('Quản lý'),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Align(
+                      //   child: Container(
+                      //     child: ElevatedButton(
+                      //       onPressed: () {
+                      //         Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(builder: (context) => ListMemberGroup()),
+                      //         );
+                      //
+                      //       },
+                      //       style: ElevatedButton.styleFrom(
+                      //
+                      //         backgroundColor: Color(0xFF8587F1),
+                      //       ),
+                      //       child: Padding(
+                      //         padding: const EdgeInsets.fromLTRB(10,10,10,10),
+                      //         child: Text('Quản lý'),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
@@ -296,6 +399,114 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
   Widget _buildTabContentHotNews(String content) {
     return Center(
         child: Image.asset("assets/images/hot_news_page.png")
+    );
+  }
+  Future<void> showPopupMenu(BuildContext context) async {
+    if (await homeGroupController.isAdmin.value == true) {
+      showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(100, kToolbarHeight, 0, 0),
+        items: <PopupMenuEntry<String>>[
+          const PopupMenuItem<String>(
+            value: 'update',
+            child: Text('Update'),
+          ),
+          const PopupMenuItem<String>(
+            value: 'delete',
+            child: Text('Delete'),
+          ),
+        ],
+      ).then((value) {
+        // Xử lý khi chọn một tùy chọn
+        if (value == 'update') {
+          // Thực hiện hành động update
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UpdateGroup()),
+          );
+        } else if (value == 'delete') {
+          // Thực hiện hành động delete
+          showDeleteOption(context);
+        }
+      });
+    }
+    else
+      {
+        showMenu(
+          context: context,
+          position: RelativeRect.fromLTRB(100, kToolbarHeight, 0, 0),
+          items: <PopupMenuEntry<String>>[
+            const PopupMenuItem<String>(
+              value: 'outgroup',
+              child: Text('Rời nhóm'),
+            ),
+          ],
+        ).then((value) {
+          // Xử lý khi chọn một tùy chọn
+          if (value == 'outgroup') {
+            // Thực hiện hành động outgroup
+            showOutGroupOption(context);
+          }
+        });
+      }
+  }
+  void showDeleteOption(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Xác nhận"),
+          content: Text("Bạn có chắc chắn muốn xóa nhóm này?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Đóng hộp thoại
+              },
+              child: Text("Không"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Thực hiện xóa nhóm ở đây
+                homeGroupController.deleteGroup(context, homeGroupController.group_id.value);
+               // Navigator.of(context).pop(); // Đóng hộp thoại
+              },
+              child: Text("Có"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void showOutGroupOption(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Xác nhận"),
+          content: Text("Bạn muốn rời khỏi nhóm này?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Đóng hộp thoại
+              },
+              child: Text("Không"),
+            ),
+            TextButton(
+              onPressed: () {
+                homeGroupController.outGroupByMe(context);
+                //Navigator.of(context).popUntil(GroupScreen() as RoutePredicate);
+                // Navigator.of(context).pop();
+                // //Navigator.of(context).pop();
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => GroupScreen()),
+                // );
+              },
+              child: Text("Có"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
