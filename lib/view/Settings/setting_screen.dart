@@ -10,7 +10,9 @@ import 'package:socialmediahq/service/UserProvider.dart';
 import 'package:socialmediahq/service/googleLogin.dart';
 import 'package:socialmediahq/view/Group/HomeGroup.dart';
 import 'package:socialmediahq/view/Group/group_screen.dart';
+import 'package:socialmediahq/view/Page/CreatePage.dart';
 import 'package:socialmediahq/view/Page/HomePage.dart';
+import 'package:socialmediahq/view/Page/page_screen.dart';
 import 'package:socialmediahq/view/Settings/ProfileScreen.dart';
 import 'package:socialmediahq/view/authen/Login_screen.dart';
 
@@ -154,14 +156,11 @@ class _SettingScreenState extends State<SettingScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            LoginController.Logout();
                             Navigator.push(
                               context,
                               PageTransition(
-                                type: PageTransitionType.rightToLeft,
-                                child: Loginscreen(
-                                  animated: false,
-                                ),
+                                  type: PageTransitionType.rightToLeft,
+                                  child: PageScreen()
                               ),
                             );
                           },
@@ -193,25 +192,30 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 8, 6, 0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12)),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(18, 18, 95, 18),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/timkiem.png",
-                                    width: 30,
-                                    height: 40,
-                                  ),
-                                  Text("Tìm Kiếm")
-                                ],
+                        GestureDetector(
+                          onTap: (){
+
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 8, 6, 0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(18, 18, 95, 18),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/timkiem.png",
+                                      width: 30,
+                                      height: 40,
+                                    ),
+                                    Text("Tìm Kiếm")
+                                  ],
+                                ),
                               ),
                             ),
                           ),
