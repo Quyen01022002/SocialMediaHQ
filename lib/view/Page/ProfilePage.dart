@@ -142,6 +142,8 @@ class _ProfilePageState extends State<ProfilePage>
                   ),
                 ),
               ),
+
+
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
@@ -178,8 +180,13 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
   Widget _buildTabContentAlbum(String content) {
-    return Center(
-        child: Image.asset("assets/images/khongbaiviet.png")
+    return Column(
+      children: [
+    Image.asset("assets/images/khongbaiviet.png"),
+        Image.asset("assets/images/khongbaiviet.png"),
+        Image.asset("assets/images/khongbaiviet.png"),
+        Image.asset("assets/images/khongbaiviet.png"),
+      ],
     );
   }
   Widget _buildTabContentPost(String content) {
