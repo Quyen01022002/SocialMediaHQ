@@ -60,6 +60,26 @@ class API_Page{
     return null;
 
   }
+  static Future<PageModel?> updatePage(PageModel pageModel, String token) async{
+    final url = Uri.parse('$baseUrl/page/update/${pageModel.id}'); // Endpoint to fetch a specific group by ID
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    final Map<String, dynamic> data = {
+      "id": pageModel.id,
+      "name": pageModel.name,
+      "description": pageModel.description,
+      "createdAt": DateFormat('yyyy-MM-dd').format(pageModel.createDate!),
+      "updatedAt": DateFormat('yyyy-MM-dd').format(pageModel.updateDate!)
+    };
+    final response = await http.put(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+  }
+
   static Future<PageModel?> deletePageById(PageModel pageModel, String token) async{
     final url = Uri.parse('$baseUrl/page/'); // Endpoint to fetch a specific group by ID
     final headers = {
@@ -152,6 +172,29 @@ class API_Page{
     return null;
   }
 
+
+  static Future<void> followPage(int idUser, int idPage, String token)async {
+    final url = Uri.parse('$baseUrl/page/addMembers?userId=$idUser&pageId=$idPage');
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    await http.post(
+      url,
+      headers: headers,
+    );
+  }
+  static Future<void> unfollowPage(int idUser, int idPage, String token)async {
+    final url = Uri.parse('$baseUrl/page/unfollow?userId=$idUser&pageId=$idPage');
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    await http.delete(
+      url,
+      headers: headers,
+    );
+  }
 
 
 }

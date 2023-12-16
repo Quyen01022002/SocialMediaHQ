@@ -47,11 +47,34 @@ class PageHomeController extends GetxController{
     pageLoadCurrent = Stream.fromIterable([pageLoad!]);
     int i =0;
   }
+  Future<void> getInfoPageToUpdate(BuildContext) async {
+    final prefs = await SharedPreferences.getInstance();
+    final adminId = prefs.getInt('id')??0;
+    final token = prefs.getString('token')??"";
+    pageCurrent = await API_Page.getPageById(page_id.value, token);
+    textControllerNamePageUpdate.text = pageCurrent!.name.toString();
+    textControllerDescPageUpdate.text = pageCurrent!.description.toString();
+  }
 
-  void UpdatePage(BuildContext context){
+  final textControllerDescPageUpdate = TextEditingController();
+  final textControllerNamePageUpdate = TextEditingController();
+  Future<void> UpdatePage(BuildContext context) async {
+    final description = textControllerDescPageUpdate.text;
+    final name_page = textControllerNamePageUpdate.text;
+    final prefs = await SharedPreferences.getInstance();
+    final adminId = prefs.getInt('id')??0;
+    final token = prefs.getString('token')??"";
+    PageModel? page = await API_Page.getPageById(page_id.value, token);
+    PageModel updatePage = PageModel(
+        name: name_page,
+        id: page_id.value,
+        createDate: page?.createDate,
+        description: description,
+        updateDate: DateTime.now()
+    );
 
-
-
+    PageModel? pageModel = await API_Page.updatePage(updatePage, token);
+    GetOnePage(page_id.value, context);
   }
 
 
@@ -85,6 +108,23 @@ class PageHomeController extends GetxController{
     followingPageStream = Stream.fromIterable([followingPage!]);
     likedPageStream = Stream.fromIterable([likedPage!]);
 
+  }
+
+
+  Future<void> followPage(BuildContext context) async{
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+    final token = prefs.getString('token') ?? "";
+    await API_Page.followPage(userId, page_id.value, token);
+    GetOnePage(page_id.value, context);
+  }
+
+  Future<void> unfollowPage(BuildContext context) async{
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+    final token = prefs.getString('token') ?? "";
+    await API_Page.unfollowPage(userId, page_id.value, token);
+    GetOnePage(page_id.value, context);
   }
 
 

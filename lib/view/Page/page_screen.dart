@@ -84,7 +84,7 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
                             padding: EdgeInsets.only(top: 0),
                             child: ElevatedButton(
                               onPressed: () {
-                                pageHomeController.GetOnePage(2, context);
+                                pageHomeController.GetOnePage(3, context);
                                 Future.delayed(Duration(milliseconds: 300), () {
                                   Navigator.push(
                                     context,

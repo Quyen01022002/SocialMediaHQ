@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:socialmediahq/controller/PageHomeController.dart';
+import 'package:socialmediahq/view/Page/UpdatePage.dart';
 
 import '../../model/PageLoad.dart';
 import '../../model/PageModel.dart';
@@ -190,6 +191,7 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                                   ElevatedButton(
                                     onPressed: () {
                                       // Xử lý khi nút 1 được nhấn
+                                      pageHomeController.unfollowPage(context);
                                     },
                                     child: Text('Hủy theo dõi'),
                                     style: ElevatedButton.styleFrom(
@@ -203,6 +205,7 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                                     ElevatedButton(
                                       onPressed: () {
                                         // Xử lý khi nút 1 được nhấn
+                                        pageHomeController.followPage(context);
                                       },
                                       child: Text('Theo dõi'),
                                       style: ElevatedButton.styleFrom(
@@ -456,7 +459,10 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
         // Xử lý khi chọn một tùy chọn
         if (value == 'update') {
           // Thực hiện hành động update
-
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UpdatePage()),
+          );
         } else if (value == 'delete') {
           // Thực hiện hành động delete
           showDeleteOption(context);
