@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:socialmediahq/controller/PageHomeController.dart';
+import 'package:socialmediahq/view/Page/ListFriend.dart';
 import 'package:socialmediahq/view/Page/UpdatePage.dart';
 
 import '../../model/PageLoad.dart';
@@ -42,7 +43,6 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
           });
         }
       });
-      print(pageLoad?.pageModel?.name);
     });
   }
   @override
@@ -108,7 +108,7 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                         ),
                         Container(
                           padding: EdgeInsets.only(
-                              top: 5, left: 55, right: 15, bottom: 0),
+                              top: 5, left: 25, right: 15, bottom: 0),
                           margin: EdgeInsets.only(bottom: 0),
                           child: Column(
                             children: [
@@ -135,47 +135,47 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                           child: Row(
 
                             children: [
-                              Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(snapshot.data!.countLiked.toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),),
-                                      Text(" Lượt thích"),
-                                    ],
-                                  ),
-                                  if (snapshot.data!.isLiked == true)
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // Xử lý khi nút 1 được nhấn
-                                    },
-                                    child: Text('Bỏ thích'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                      ),
-                                      backgroundColor: Color(0xFF8587F1),
-                                    ),
-
-                                  ),
-                                  if (snapshot.data!.isLiked == false)
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        // Xử lý khi nút 1 được nhấn
-                                      },
-                                      child: Text('Thích'),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                        backgroundColor: Color(0xFF8587F1),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                              SizedBox(width: 20,),
+                              // Column(
+                              //   children: [
+                              //     Row(
+                              //       children: [
+                              //         Text(snapshot.data!.countLiked.toString(),
+                              //           style: TextStyle(
+                              //             fontWeight: FontWeight.bold,
+                              //           ),),
+                              //         Text(" Lượt thích"),
+                              //       ],
+                              //     ),
+                              //     if (snapshot.data!.isLiked == true)
+                              //     ElevatedButton(
+                              //       onPressed: () {
+                              //         // Xử lý khi nút 1 được nhấn
+                              //       },
+                              //       child: Text('Bỏ thích'),
+                              //       style: ElevatedButton.styleFrom(
+                              //         shape: RoundedRectangleBorder(
+                              //           borderRadius: BorderRadius.circular(8.0),
+                              //         ),
+                              //         backgroundColor: Color(0xFF8587F1),
+                              //       ),
+                              //
+                              //     ),
+                              //     if (snapshot.data!.isLiked == false)
+                              //       ElevatedButton(
+                              //         onPressed: () {
+                              //           // Xử lý khi nút 1 được nhấn
+                              //         },
+                              //         child: Text('Thích'),
+                              //         style: ElevatedButton.styleFrom(
+                              //           shape: RoundedRectangleBorder(
+                              //             borderRadius: BorderRadius.circular(8.0),
+                              //           ),
+                              //           backgroundColor: Color(0xFF8587F1),
+                              //         ),
+                              //       ),
+                              //   ],
+                              // ),
+                              // SizedBox(width: 20,),
                               Column(
                                 children: [
                                   Row(
@@ -308,24 +308,6 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                               ),
                             ),
                             Container(
-                              padding: EdgeInsets.only(left: 25, top: 10),
-                              child: Row(
-
-                                children: [
-                                  Text("8.3K",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),),
-                                  Text("Lượt thích"),
-                                  Text("      2M",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),),
-                                  Text("Lượt theo dõi")
-                                ],
-                              ),
-                            ),
-                            Container(
                               padding: EdgeInsets.only(
                                   top: 20, left: 18, right: 18),
                               child: Text(
@@ -366,6 +348,7 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                   }),
 
               ),
+                if (pageHomeController.isAdmin.value == true)
                 Positioned(
                   top: 200,
                   right: 20,
@@ -395,13 +378,6 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
               ],
             ),
           ),
-
-
-
-
-
-
-
 
 
         ],
@@ -451,6 +427,10 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
             child: Text('Cập nhật'),
           ),
           const PopupMenuItem<String>(
+            value: 'changeAdmin',
+            child: Text('Giao quyền admin'),
+          ),
+          const PopupMenuItem<String>(
             value: 'delete',
             child: Text('Xóa trang'),
           ),
@@ -466,6 +446,11 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
         } else if (value == 'delete') {
           // Thực hiện hành động delete
           showDeleteOption(context);
+        }
+        else if (value == 'changeAdmin') {
+          // Thực hiện hành động delete
+          pageHomeController.loadFriends(context);
+
         }
       });
     }
@@ -495,7 +480,7 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Xác nhận"),
-          content: Text("Bạn có chắc chắn muốn xóa nhóm này?"),
+          content: Text("Bạn có chắc chắn muốn xóa trang này?"),
           actions: [
             TextButton(
               onPressed: () {

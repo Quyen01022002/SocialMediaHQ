@@ -100,7 +100,7 @@ class API_Page{
     );
   }
   static Future<List<PageModel>?> getAllPageList(String token) async {
-    final url = Uri.parse('$baseUrl/page/all');
+    final url = Uri.parse('$baseUrl/page/');
     final headers = {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
@@ -148,7 +148,7 @@ class API_Page{
     return null;
   }
   static Future<List<PageModel>?> getLikedPageList(String token, int id) async {
-    final url = Uri.parse('$baseUrl/page/follow/$id');
+    final url = Uri.parse('$baseUrl/page/admin/$id');
     final headers = {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
@@ -196,5 +196,67 @@ class API_Page{
     );
   }
 
+  static Future<bool> checkFollow(int idUser, int idPage, String token) async{
+    final url = Uri.parse('$baseUrl/page/getFollowBool?pageId=$idPage&userId=$idUser');
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    final response = await http.get(
+      url,
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final responseData = response.body;
+      if (responseData.isNotEmpty)
+        return true;
+      return false;
+    }
+    return false;
+  }
+  static Future<int> getCountFollow(int idPage, String token) async {
+    final url = Uri.parse('$baseUrl/page/$idPage/follow');
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    final response = await http.get(
+      url,
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final responseData = response.body;
+      if (responseData.isNotEmpty) {
+        if (response.statusCode == 200) {
+          final responseData = response.body;
+          if (responseData.isNotEmpty) {
+            ApiReponse<int> count = ApiReponse<int>.fromJson (
+              responseData, (dynamic json) => (json),);
+            return count.payload;
+          }
+          return 0;
+        }
+        return 0;
+      }
+    }
+    return 0;
+  }
+
+  static Future<void> updateAdmin(int pageid, int iduser, String token) async{
+    final url = Uri.parse('$baseUrl/page/updateAdmin/$pageid');
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    final Map<String, dynamic> data = {
+      "adminId": iduser,
+      "pageId": pageid
+    };
+    final response = await http.put(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+  }
 
 }

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:socialmediahq/view/Page/CreatePage2.dart';
+import 'package:socialmediahq/view/Page/HomePage.dart';
 import 'package:socialmediahq/view/Page/ProPage.dart';
 
 import '../../controller/Group/HomeGroupController.dart';
@@ -28,8 +30,11 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
   late TabController _tabController;
   final PageHomeController pageHomeController = Get.put(PageHomeController());
   Stream<List<PageModel>>? allPageStream;
+  List<PageModel>? allPage;
   Stream<List<PageModel>>? followPageStream;
+  List<PageModel>? followPage;
   Stream<List<PageModel>>? likedPageStream;
+  List<PageModel>? likedPage;
 
   @override
   void initState() {
@@ -39,14 +44,48 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
   }
   late Timer _timer;
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Gọi hàm cần thiết ở đây
+      _loadData();
+      allPageStream = pageHomeController.allPageStream;
       // Đây là Stream mà bạn cần theo dõi
+      allPageStream?.listen((List<PageModel>? updatedGroups) {
+        if (updatedGroups != null) {
+          setState(() {
+            allPage = updatedGroups;
+          });
+        }
+      });
+
+      followPageStream = pageHomeController.followingPageStream;
+      // Đây là Stream mà bạn cần theo dõi
+      followPageStream?.listen((List<PageModel>? updatedGroups) {
+        if (updatedGroups != null) {
+          setState(() {
+            followPage = updatedGroups;
+          });
+        }
+      });
+
+      likedPageStream = pageHomeController.likedPageStream;
+      // Đây là Stream mà bạn cần theo dõi
+      likedPageStream?.listen((List<PageModel>? updatedGroups) {
+        if (updatedGroups != null) {
+          setState(() {
+            likedPage = updatedGroups;
+          });
+        }
+      });
+
       // Cập nhật danh sách nhóm khi Stream thay đổi
 
     });
   }
 
+  void _loadData() async {
+    await pageHomeController.loadPage();
+
+  }
 
   @override
   void dispose() {
@@ -88,7 +127,7 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
                                 Future.delayed(Duration(milliseconds: 300), () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => ProPage()),
+                                    MaterialPageRoute(builder: (context) => CreatePage2()),
                                   );
                                 });
                               },
@@ -133,8 +172,8 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
                         child: TabBar(
                           controller: _tabController,
                           tabs: [
+                            _buildTab('Tất cả trang'),
                             _buildTab('Trang của bạn'),
-                            _buildTab('Trang đã thích'),
                             _buildTab('Đang theo dõi'),
                           ],
                           indicator: BoxDecoration(
@@ -157,9 +196,9 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
                 controller: _tabController,
                 children: <Widget>[
                   // Tab 1 content
-                  _buildTabContentForum(),
-                  _buildTabContentPost(),
-                  _buildTabContentHotNews(),
+                  _buildTabContentAllPage(),
+                  _buildTabContentOfUserAdmin(),
+                  _buildTabContentFollowPage(),
                 ],
               ),
             ),
@@ -183,62 +222,7 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
       ),
     );
   }
-  Widget _buildTabContentPost() {
-    return StreamBuilder<List<PageModel>>(
-      stream: allPageStream, // Sử dụng stream để cập nhật danh sách nhóm
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                onTap: () {
-
-                },
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/facebook.png'),
-                ),
-                title: Text(snapshot.data![index].name.toString()),
-              );
-            },
-          );
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
-  }
-  Widget _buildTabContentForum() {
-    return StreamBuilder<List<PageModel>>(
-      stream: followPageStream, // Sử dụng stream để cập nhật danh sách nhóm
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                onTap: () {
-
-                },
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/facebook.png'),
-                ),
-                title: Text(snapshot.data![index].name.toString()),
-              );
-            },
-          );
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
-
-  }
-  Widget _buildTabContentHotNews() {
+  Widget _buildTabContentOfUserAdmin() {
     return StreamBuilder<List<PageModel>>(
       stream: likedPageStream, // Sử dụng stream để cập nhật danh sách nhóm
       builder: (context, snapshot) {
@@ -248,7 +232,48 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
             itemBuilder: (context, index) {
               return ListTile(
                 onTap: () {
-
+                  pageHomeController.GetOnePage(snapshot.data![index].id!, context);
+                  Future.delayed(Duration(milliseconds: 300), () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProPage()),
+                    );
+                  });
+                },
+                leading: CircleAvatar(
+                  backgroundImage: AssetImage('assets/images/facebook.png'),
+                ),
+                title: Text(snapshot.data![index].name.toString()),
+              );
+            },
+          );
+        } else {
+          return Center(
+            child: Text(
+              'Bạn chưa tạo trạng nào!'
+            ),
+          );
+        }
+      },
+    );
+  }
+  Widget _buildTabContentAllPage() {
+    return StreamBuilder<List<PageModel>>(
+      stream: allPageStream, // Sử dụng stream để cập nhật danh sách nhóm
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                onTap: () {
+                  pageHomeController.GetOnePage(snapshot.data![index].id!, context);
+                  Future.delayed(Duration(milliseconds: 300), () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProPage()),
+                    );
+                  });
                 },
                 leading: CircleAvatar(
                   backgroundImage: AssetImage('assets/images/facebook.png'),
@@ -260,6 +285,42 @@ class _PageScreenState extends State<PageScreen> with SingleTickerProviderStateM
         } else {
           return Center(
             child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+
+  }
+  Widget _buildTabContentFollowPage() {
+    return StreamBuilder<List<PageModel>>(
+      stream: followPageStream, // Sử dụng stream để cập nhật danh sách nhóm
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                onTap: () {
+                  pageHomeController.GetOnePage(snapshot.data![index].id!, context);
+                  Future.delayed(Duration(milliseconds: 300), () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProPage()),
+                    );
+                  });
+                },
+                leading: CircleAvatar(
+                  backgroundImage: AssetImage('assets/images/facebook.png'),
+                ),
+                title: Text(snapshot.data![index].name.toString()),
+              );
+            },
+          );
+        } else {
+          return Center(
+            child: Text(
+              'Bạn chưa theo dõi trang nào'
+            )
           );
         }
       },
