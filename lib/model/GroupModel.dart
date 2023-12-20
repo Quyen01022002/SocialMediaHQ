@@ -47,8 +47,7 @@ class GroupModel {
       description: json['description'] ?? '',
       name: json['name'] ?? '',
       listMembers: listUser,
-      listPost: listPost
-      listMembers: listUser,
+      listPost: listPost,
       adminId: json['adminId'] ?? 0
     );
 

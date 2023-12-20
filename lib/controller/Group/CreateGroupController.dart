@@ -30,8 +30,7 @@ class GroupController extends GetxController{
         description: description,
         updatedDate: DateTime.now(),
         listMembers: [],
-        listPost: []
-        listMembers: [],
+        listPost: [],
       adminId: 0
     );
 

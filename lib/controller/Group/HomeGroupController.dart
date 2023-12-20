@@ -41,8 +41,7 @@ class HomeGroupController extends GetxController{
         description: description,
         updatedDate: DateTime.now(),
         listMembers: [],
-        listPost: []
-        listMembers: [],
+        listPost: [],
       adminId: adminId
     );
 
@@ -63,99 +62,98 @@ class HomeGroupController extends GetxController{
   }
 
   Stream<GroupModel>? groupCurrent;
-  void GetOneGroup(BuildContext context, int idgroup) async{
+  void GetOneGroup(BuildContext context, int idgroup) async {
     final prefs = await SharedPreferences.getInstance();
-    final adminId = prefs.getInt('id')??0;
-    final token = prefs.getString('token')??"";
+    final adminId = prefs.getInt('id') ?? 0;
+    final token = prefs.getString('token') ?? "";
     group_id.value = idgroup;
     final groupModel = await API_Group.getGroupById(idgroup, token);
-    if (groupModel !=  null)
-      {
-        nameGroup.value = groupModel.name ?? "";
-        descriptionGroup.value = groupModel.description ?? "";
-        listUserMembers= groupModel.listMembers;
-        listPost= groupModel.listPost;
-        if (groupModel.listMembers[0].id == adminId){
+    if (groupModel != null) {
+      nameGroup.value = groupModel.name ?? "";
+      descriptionGroup.value = groupModel.description ?? "";
+      listUserMembers = groupModel.listMembers;
+      listPost = groupModel.listPost;
+      if (groupModel.listMembers[0].id == adminId) {
         adminPageCurrent.value = groupModel.adminId!;
-        if (groupModel.adminId == adminId){
+        if (groupModel.adminId == adminId) {
           isAdmin.value = true;
         }
         else
           isAdmin.value = false;
       }
-    groupCurrent = Stream.fromIterable([groupModel!]);
+      groupCurrent = Stream.fromIterable([groupModel!]);
+    }
   }
 
-  void addlistMembers(List<int> listuserid){
+    void addlistMembers(List<int> listuserid) {
 
 
+    }
+    List<UserMember>? users = [];
 
-  }
-  List<UserMember>? users = [];
+    Future<void> loadFriends(BuildContext context) async {
+      users = [];
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      List<UserEnity>? result = await API_Friend.LoadListFriends(userId, token);
 
-  Future<void> loadFriends(BuildContext context) async {
-    users = [];
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id') ?? 0;
-    final token = prefs.getString('token') ?? "";
-    List<UserEnity>? result = await API_Friend.LoadListFriends(userId, token);
+      if (result != null) {
+        // Sử dụng vòng lặp forEach để truy cập từng phần tử trong danh sách
+        result!.forEach((userEntity) {
+          UserMember user = UserMember(id: userEntity.user_id ?? 0,
+              firstName: userEntity.first_name ?? "",
+              lastName: userEntity.last_name ?? "",
+              phone: userEntity.phone ?? "",
+              email: userEntity.email ?? "",
+              profilePicture: userEntity.avatarUrl ?? "");
 
-    if (result != null) {
-      // Sử dụng vòng lặp forEach để truy cập từng phần tử trong danh sách
-      result!.forEach((userEntity) {
-        UserMember user = UserMember(id: userEntity.user_id ?? 0,
-            firstName: userEntity.first_name ?? "",
-            lastName: userEntity.last_name ?? "",
-            phone: userEntity.phone ?? "",
-            email: userEntity.email ?? "",
-            profilePicture: userEntity.avatarUrl ?? "");
+          users?.add(user);
+        });
+      }
 
-        users?.add(user);
+
+      Future.delayed(Duration(milliseconds: 300), () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddMembersGroup()),
+        );
       });
     }
+    List<GroupModel>? groups = [];
+    List<GroupModel>? groupsJoin = [];
+    Stream<List<GroupModel>>? groupsStream;
+    Stream<List<GroupModel>>? groupsJoinStream;
+    Future<void> loadGroupsOfAdmin() async {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      List<GroupModel>? result = await API_Group.getAllGroupsOfAdmin(
+          token, userId);
+      if (result != null)
+        groups = result;
+      groupsStream = Stream.fromIterable([groups!]);
+    }
+    Future<void> loadGroupsJoin() async {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      List<GroupModel>? result = await API_Group.getAllGroupsJoin(
+          token, userId);
+      if (result != null)
+        groupsJoin = result;
+      groupsJoinStream = Stream.fromIterable([groupsJoin!]);
+    }
+    List<User> selectedMembers = []; // Danh sách thành viên đã chọn
 
-
-    Future.delayed(Duration(milliseconds: 300), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AddMembersGroup()),
-      );
-    });
-
-
-  }
-  List<GroupModel>? groups = [];
-  List<GroupModel>? groupsJoin = [];
-  Stream<List<GroupModel>>? groupsStream;
-  Stream<List<GroupModel>>? groupsJoinStream;
-  Future<void> loadGroupsOfAdmin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id') ?? 0;
-    final token = prefs.getString('token') ?? "";
-    List<GroupModel>? result = await API_Group.getAllGroupsOfAdmin(token, userId);
-    if (result != null)
-      groups = result;
-    groupsStream = Stream.fromIterable([groups!]);
-  }
-  Future<void> loadGroupsJoin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id') ?? 0;
-    final token = prefs.getString('token') ?? "";
-    List<GroupModel>? result = await API_Group.getAllGroupsJoin(token, userId);
-    if (result != null)
-      groupsJoin = result;
-    groupsJoinStream = Stream.fromIterable([groupsJoin!]);
-  }
-  List<User> selectedMembers = []; // Danh sách thành viên đã chọn
-
-  Future<void> addSelectedMembers(BuildContext context, List<User> selectedUsers) async {
-    selectedMembers = selectedUsers;
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id') ?? 0;
-    final token = prefs.getString('token') ?? "";
-    List<GroupMemberRequest>? members = [];
-    if (selectedMembers!= null)
-      {
+    Future<void> addSelectedMembers(BuildContext context,
+        List<User> selectedUsers) async {
+      selectedMembers = selectedUsers;
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      List<GroupMemberRequest>? members = [];
+      if (selectedMembers != null) {
         selectedMembers!.forEach((element) {
           GroupMemberRequest groupMemberRequest = GroupMemberRequest(
               user_id: element.id,
@@ -163,116 +161,113 @@ class HomeGroupController extends GetxController{
           members.add(groupMemberRequest);
         });
       }
-    await API_Group.addMembersToGroup(token, members);
-    users = [];
-    GetOneGroup(context, group_id.value);
-  }
-  Future<void> deleteGroup(BuildContext context, int id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id') ?? 0;
-    final token = prefs.getString('token') ?? "";
-    await API_Group.deleteGroupById(id, token);
-
-    loadGroupsOfAdmin();
-    loadGroupsJoin();
-    Future.delayed(Duration(milliseconds: 100), () {
-      int count =0;
-      Navigator.of(context).popUntil((_) => count++ >= 2);
-    });
-
-  }
-
-  Future<void> deleteMemberOutGroup(BuildContext context, int idMember) async{
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id') ?? 0;
-    final token = prefs.getString('token') ?? "";
-    GroupMemberRequest groupMemberRequest = GroupMemberRequest(user_id: idMember, group_id: group_id.value);
-
-    await API_Group.deleteMemberOutGroupById(groupMemberRequest, token);
-    GetOneGroup(context, group_id.value);
-
-  }
-  Future<void> outGroupByMe(BuildContext context) async{
-
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id') ?? 0;
-    final token = prefs.getString('token') ?? "";
-    GroupMemberRequest groupMemberRequest = GroupMemberRequest(user_id: userId, group_id: group_id.value);
-
-    await API_Group.deleteMemberOutGroupById(groupMemberRequest, token);
-    Future.delayed(Duration(milliseconds: 100), () {
-      int count =0;
-      Navigator.of(context).popUntil((_) => count++ >= 2);
-    });
-  }
-
-  Future<void> loadHomeGroupScreen(BuildContext context) async{
-    loadGroupsJoin();
-    loadGroupsOfAdmin();
-    await Future.delayed(Duration(milliseconds: 300), () {
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeft,
-          child: GroupScreen(),
-        ),
-      );
-    });
-  }
-
-
-  Future<void> getInfoGroupToUpdate(BuildContext) async {
-    final prefs = await SharedPreferences.getInstance();
-    final adminId = prefs.getInt('id')??0;
-    final token = prefs.getString('token')??"";
-    final groupModel = await API_Group.getGroupById(group_id.value, token);
-    if (groupModel !=  null)
-    {
-      nameGroup.value = groupModel.name ?? "";
-      descriptionGroup.value = groupModel.description ?? "";
-      listUserMembers= groupModel.listMembers;
-      if (groupModel.listMembers[0].id == adminId){
-        isAdmin.value = true;
-      }
-      else
-        isAdmin.value = false;
+      await API_Group.addMembersToGroup(token, members);
+      users = [];
+      GetOneGroup(context, group_id.value);
     }
-    textControllerNameGroupUpdate.text = nameGroup.value;
-    textControllerMotaUpdate.text = descriptionGroup.value;
+    Future<void> deleteGroup(BuildContext context, int id) async {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      await API_Group.deleteGroupById(id, token);
+
+      loadGroupsOfAdmin();
+      loadGroupsJoin();
+      Future.delayed(Duration(milliseconds: 100), () {
+        int count = 0;
+        Navigator.of(context).popUntil((_) => count++ >= 2);
+      });
+    }
+
+    Future<void> deleteMemberOutGroup(BuildContext context,
+        int idMember) async {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      GroupMemberRequest groupMemberRequest = GroupMemberRequest(
+          user_id: idMember, group_id: group_id.value);
+
+      await API_Group.deleteMemberOutGroupById(groupMemberRequest, token);
+      GetOneGroup(context, group_id.value);
+    }
+    Future<void> outGroupByMe(BuildContext context) async {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      GroupMemberRequest groupMemberRequest = GroupMemberRequest(
+          user_id: userId, group_id: group_id.value);
+
+      await API_Group.deleteMemberOutGroupById(groupMemberRequest, token);
+      Future.delayed(Duration(milliseconds: 100), () {
+        int count = 0;
+        Navigator.of(context).popUntil((_) => count++ >= 2);
+      });
+    }
+
+    Future<void> loadHomeGroupScreen(BuildContext context) async {
+      loadGroupsJoin();
+      loadGroupsOfAdmin();
+      await Future.delayed(Duration(milliseconds: 300), () {
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeft,
+            child: GroupScreen(),
+          ),
+        );
+      });
+    }
+
+
+    final textControllerMotaUpdate = TextEditingController();
+    final textControllerNameGroupUpdate = TextEditingController();
+    Future<void> getInfoGroupToUpdate(BuildContext) async {
+      final prefs = await SharedPreferences.getInstance();
+      final adminId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      final groupModel = await API_Group.getGroupById(group_id.value, token);
+      if (groupModel != null) {
+        nameGroup.value = groupModel.name ?? "";
+        descriptionGroup.value = groupModel.description ?? "";
+        listUserMembers = groupModel.listMembers;
+        if (groupModel.listMembers[0].id == adminId) {
+          isAdmin.value = true;
+        }
+        else
+          isAdmin.value = false;
+      }
+      textControllerNameGroupUpdate.text = nameGroup.value;
+      textControllerMotaUpdate.text = descriptionGroup.value;
+    }
+
+    Future<void> updateGroup(BuildContext context) async {
+      final description = textControllerMotaUpdate.text;
+      final name_group = textControllerNameGroupUpdate.text;
+      final prefs = await SharedPreferences.getInstance();
+      final adminId = prefs.getInt('id') ?? 0;
+
+      GroupModel newGroup = GroupModel(
+          name: name_group,
+          id: 0,
+          createdDate: DateTime.now(),
+          description: description,
+          updatedDate: DateTime.now(),
+          listMembers: [],
+          listPost: [],
+          adminId: adminId
+      );
+
+      final token = prefs.getString('token') ?? "";
+      GroupModel? groupModel = await API_Group.updateGroupById(
+          group_id.value, newGroup, token);
+      GetOneGroup(context, group_id.value);
+    }
+
+    Future<void> updateAdmin(BuildContext context, int iduser) async {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('id') ?? 0;
+      final token = prefs.getString('token') ?? "";
+      await API_Group.updateAdmin(group_id.value, iduser, token);
+      GetOneGroup(context, group_id.value);
+    }
   }
-
-  final textControllerMotaUpdate = TextEditingController();
-  final textControllerNameGroupUpdate = TextEditingController();
-  Future<void> updateGroup(BuildContext context) async{
-    final description = textControllerMotaUpdate.text;
-    final name_group = textControllerNameGroupUpdate.text;
-    final prefs = await SharedPreferences.getInstance();
-    final adminId = prefs.getInt('id')??0;
-
-    GroupModel newGroup = GroupModel(
-        name: name_group,
-        id: 0,
-        createdDate: DateTime.now(),
-        description: description,
-        updatedDate: DateTime.now(),
-        listMembers: [],
-        listPost: [],
-      adminId: adminId
-    );
-
-    final token = prefs.getString('token')??"";
-    GroupModel? groupModel = await API_Group.updateGroupById(group_id.value, newGroup, token);
-    GetOneGroup(context, group_id.value);
-}
-
-  Future<void> updateAdmin(BuildContext context, int iduser) async{
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id') ?? 0;
-    final token = prefs.getString('token') ?? "";
-    await API_Group.updateAdmin(group_id.value,iduser, token);
-    GetOneGroup(context, group_id.value);
-
-
-  }
-
-}
