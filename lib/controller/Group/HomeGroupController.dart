@@ -19,6 +19,7 @@ class HomeGroupController extends GetxController{
   RxInt group_id = 0.obs;
   RxBool isAdmin = false.obs;
   List<UserMember>? listUserMembers=[];
+  RxInt adminPageCurrent = 0.obs;
   final textControllerMota = TextEditingController();
   final textControllerNameGroup = TextEditingController();
   final desc = RxString('');
@@ -37,7 +38,8 @@ class HomeGroupController extends GetxController{
         createdDate: DateTime.now(),
         description: description,
         updatedDate: DateTime.now(),
-        listMembers: []
+        listMembers: [],
+      adminId: adminId
     );
 
     final token = prefs.getString('token')??"";
@@ -68,7 +70,8 @@ class HomeGroupController extends GetxController{
         nameGroup.value = groupModel.name ?? "";
         descriptionGroup.value = groupModel.description ?? "";
         listUserMembers= groupModel.listMembers;
-        if (groupModel.listMembers[0].id == adminId){
+        adminPageCurrent.value = groupModel.adminId!;
+        if (groupModel.adminId == adminId){
           isAdmin.value = true;
         }
         else
@@ -246,12 +249,23 @@ class HomeGroupController extends GetxController{
         createdDate: DateTime.now(),
         description: description,
         updatedDate: DateTime.now(),
-        listMembers: []
+        listMembers: [],
+      adminId: adminId
     );
 
     final token = prefs.getString('token')??"";
     GroupModel? groupModel = await API_Group.updateGroupById(group_id.value, newGroup, token);
     GetOneGroup(context, group_id.value);
 }
+
+  Future<void> updateAdmin(BuildContext context, int iduser) async{
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+    final token = prefs.getString('token') ?? "";
+    await API_Group.updateAdmin(group_id.value,iduser, token);
+    GetOneGroup(context, group_id.value);
+
+
+  }
 
 }
