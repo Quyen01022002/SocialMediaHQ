@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:socialmediahq/model/PostModel.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
@@ -13,7 +14,10 @@ class UserProfile {
   final String? email;
   final String? phone;
   final String? avatarUrl;
+  final String? backGround;
+  final bool? isFriends;
   final int? countFriend;
+  final int? idFriends;
   final List<PostModel>? listpost;
   final List<UserEnity>? friends;
 
@@ -26,7 +30,11 @@ class UserProfile {
     this.avatarUrl,
     this.countFriend,
     this.listpost,
+    this.isFriends,
     this.friends,
+    this.idFriends,
+    this.backGround
+
   });
 
 
@@ -47,7 +55,10 @@ class UserProfile {
 
       phone: json["phone"] ?? "",
       avatarUrl: json["profilePicture"] ?? "",
+      backGround: json["backGroundPicture"] ?? "",
       countFriend: json["countFriend"] ?? 0,
+      idFriends: json["idFriends"] ?? 0,
+      isFriends: json["isFriends"] ?? false,
       listpost: listPost,
       friends:friendships,
     );

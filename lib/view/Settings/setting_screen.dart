@@ -84,16 +84,34 @@ class _SettingScreenState extends State<SettingScreen> {
                               padding: const EdgeInsets.fromLTRB(
                                 0,
                                 0,
-                                0,
+                                10,
                                 0,
                               ),
                               child: ClipOval(
-                                  child: Image.network(
-                                settingController.Avatar.toString(),
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
-                              ))),
+                                child: Obx(
+                                      () {
+                                    final imageUrl = settingController.Avatar.toString();
+
+                                    if (imageUrl.startsWith('http')) {
+                                      // Đây là một URL hợp lệ
+                                      return Image.network(
+                                        imageUrl,
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                      );
+                                    } else {
+                                      // Đây có thể là đường dẫn cục bộ
+                                      return Image.asset(
+                                        "assets/images/backgourd.png",
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),),
 
                           Obx(
                             () => Text(

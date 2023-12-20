@@ -12,9 +12,12 @@ class ProfileController extends GetxController {
   RxInt follow = 0.obs;
   RxInt following = 0.obs;
   RxInt post = 0.obs;
+  RxInt idFriends = 0.obs;
   RxString fisrt_name = "".obs;
   RxString last_name = "".obs;
   RxString Avatar = "".obs;
+  RxString BackGround = "".obs;
+  RxBool isFriend = true.obs;
 
 
   void loadthongtin() async {
@@ -33,6 +36,9 @@ class ProfileController extends GetxController {
         fisrt_name.value = userProfile.first_name!;
        last_name.value = userProfile.last_name!;
        Avatar.value = userProfile.avatarUrl!;
+        BackGround.value = userProfile.backGround!;
+       isFriend.value=userProfile.isFriends!;
+       print(userProfile.isFriends);
       }
     } catch (e) {
       print("Error loading profile: $e");
@@ -56,6 +62,7 @@ class ProfileController extends GetxController {
         fisrt_name.value = userProfile.first_name!;
         last_name.value = userProfile.last_name!;
         Avatar.value = userProfile.avatarUrl!;
+        idFriends.value = userProfile.idFriends!;
       }
     } catch (e) {
       print("Error loading profile: $e");

@@ -22,8 +22,9 @@ class API_Profile
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
         ApiReponse<UserProfile> userProfileResponse = ApiReponse<UserProfile>.fromJson(
-          responseData,
+          utf8Data,
               (dynamic json) => UserProfile.fromJson(json),
         );
         return userProfileResponse.payload;
@@ -35,7 +36,7 @@ class API_Profile
     }
   }
 
-  static void updateAvatar(int? userid,String token,String Avatar) async {
+  static Future<String> updateAvatar(int? userid,String token,String Avatar) async {
     final url = Uri.parse('$baseUrl/user/$userid');
 
     final headers = {
@@ -53,8 +54,26 @@ class API_Profile
       headers: headers,
       body: jsonEncode(data),
     );
-
+    return "Success";
   }
+  static Future<String> updateBackGround(int? userid,String token,String Avatar) async {
+    final url = Uri.parse('$baseUrl/user/background/$userid');
 
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',};
 
+// Tạo một Map chứa dữ liệu người dùng
+    final data = {
+      "background":Avatar,
+
+    };
+
+    await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+    return "Success";
+  }
 }

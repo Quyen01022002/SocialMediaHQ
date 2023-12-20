@@ -24,9 +24,10 @@ class API_Post {
       final responseData = response.body;
 
       if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
         ApiReponse<List<PostModel>> listPost =
             ApiReponse<List<PostModel>>.fromJson(
-          responseData,
+              utf8Data,
           (dynamic json) =>
               List<PostModel>.from(json.map((x) => PostModel.fromJson(x))),
         );
@@ -40,7 +41,7 @@ class API_Post {
   }
 
   static Future<PostEntity?> post(
-      PostEntity post, List<String> img, String token) async {
+      PostEntity post, List<String> img, String token,int groupId) async {
     final url = Uri.parse('$baseUrl/post/post');
 
     final headers = {
@@ -51,11 +52,34 @@ class API_Post {
         img.map((imageUrl) => {'linkPicture': imageUrl}).toList();
 
     final Map<String, dynamic> data = {
+      "groups": groupId,
       "contentPost": post.content_post,
       "listAnh": listAnh,
     };
 
     await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+  }
+  static Future<PostEntity?> upatePost(
+      PostEntity post, List<String> img, String token) async {
+    final url = Uri.parse('$baseUrl/post/update');
+
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    List<Map<String, String>> listAnh =
+    img.map((imageUrl) => {'linkPicture': imageUrl}).toList();
+
+    final Map<String, dynamic> data = {
+      "contentPost": post.content_post,
+      "listAnh": listAnh,
+    };
+
+    await http.put(
       url,
       headers: headers,
       body: jsonEncode(data),
@@ -106,5 +130,15 @@ class API_Post {
     } else {
       return null;
     }
+  }
+  static void deletePost(int? postid, String token) async {
+    await http.delete(
+      Uri.parse('$baseUrl/post/$postid'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:socialmediahq/model/PostModel.dart';
+
 import 'UserModel.dart';
 
 class GroupModel {
@@ -9,6 +11,7 @@ class GroupModel {
   final DateTime? createdDate;
   final DateTime? updatedDate;
   final List<UserMember> listMembers;
+  final List<PostModel> listPost;
   final int? adminId;
 
   GroupModel({
@@ -18,6 +21,7 @@ class GroupModel {
     required this.description,
     required this.updatedDate,
     required this.listMembers,
+    required this.listPost,
     required this.adminId,
 
 });
@@ -30,12 +34,20 @@ class GroupModel {
     else
       listUser = (json['groupMembers'] as List)
     .map((item) => UserMember.fromJson(item)).toList();
+    List<PostModel> listPost = [];
+    if (json['listPost'] == null)
+      listUser= [];
+    else
+      listPost = (json['listPost'] as List)
+          .map((item) => PostModel.fromJson(item)).toList();
     return GroupModel(
       id: json['id'] ?? 0,
         createdDate: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
         updatedDate: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       description: json['description'] ?? '',
       name: json['name'] ?? '',
+      listMembers: listUser,
+      listPost: listPost
       listMembers: listUser,
       adminId: json['adminId'] ?? 0
     );

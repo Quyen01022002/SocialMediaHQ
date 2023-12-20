@@ -1,83 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:socialmediahq/component/Friends_Header.dart';
-import 'package:socialmediahq/component/Home_Header.dart';
-
-import '../../component/Friends_InviteItem.dart';
-import '../../controller/FriendsController.dart';
+import 'package:socialmediahq/controller/FriendsController.dart';
+import 'package:socialmediahq/component/Friends_Item.dart';
 
 class FriendList extends StatefulWidget {
   const FriendList({Key? key}) : super(key: key);
 
   @override
-  State<FriendList> createState() => _WatchScreenState();
+  State<FriendList> createState() => _FriendListState();
 }
 
-class _WatchScreenState extends State<FriendList> {
-  final FriendController myController = Get.find();
+class _FriendListState extends State<FriendList> {
+  final FriendController myController = Get.put(FriendController());
+
   @override
   void initState() {
     super.initState();
-    myController.loadPost();
+    myController.loadFriends();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: ListView(
-        children: [
-          HomeHeader(),
-          FriendHeader(),
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFF3F5F7),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                      child: RichText(
-                        text: TextSpan(
-                          text: "Bạn bè",
-                          style: TextStyle(color: Colors.black, fontSize: 20),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: ' ${myController.listPost.length}',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bạn Bè'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              // Handle search button tap
+            },
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${myController.listFriend.length} Bạn Bè',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
                     ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFFF3F5F7),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 26, 16, 0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Obx(
-                    () {
-                      print(
-                          "Building Obx widget...listPost Gieo diện:${myController.listPost}");
-                      return Column(
-                        key: ValueKey(myController.listPost),
-                        // Thêm key vào đây
-                        children: myController.listPost
-                            .map((post) => ItemInvite(
-                                  friends: post,
-                                ))
-                            .toList(),
+                        () {
+                      return ListView.builder(
+                        itemCount: myController.listFriend.length,
+                        itemBuilder: (context, index) {
+                          final friend = myController.listFriend[index];
+                          return ItemFriend(friends: friend);
+                        },
                       );
                     },
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

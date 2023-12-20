@@ -2,12 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socialmediahq/component/Post/create_post.dart';
 import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
 import 'package:socialmediahq/view/Group/AddMembers.dart';
 import 'package:socialmediahq/view/Group/ListMembersGroup.dart';
 import 'package:socialmediahq/view/Group/UpdateGroup.dart';
 import 'package:socialmediahq/view/Group/group_screen.dart';
 
+import '../../component/Post/Home_Post.dart';
+import '../../component/Post/create_post_Group.dart';
 import '../../model/GroupModel.dart';
 
 class HomeGroup extends StatefulWidget {
@@ -16,6 +21,7 @@ class HomeGroup extends StatefulWidget {
   @override
   State<HomeGroup> createState() => _HomeGroupState();
 }
+
 class UserAvatar {
   final int id;
   final String name;
@@ -24,33 +30,49 @@ class UserAvatar {
 
   UserAvatar(this.id, this.name, this.avatar, this.check);
 }
-class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMixin {
-  final HomeGroupController homeGroupController = Get.put(HomeGroupController());
+
+class _HomeGroupState extends State<HomeGroup>
+    with SingleTickerProviderStateMixin {
+  final HomeGroupController homeGroupController =
+      Get.put(HomeGroupController());
   late TabController _tabController;
   final List<UserAvatar> userList = [
-    UserAvatar(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
-    UserAvatar(1,'Trần Bửu Quyến', 'assets/images/google.png', false),
-    UserAvatar(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
-    UserAvatar(1,'Đỗ Duy Hào', 'assets/images/facebook.png', false),
-    UserAvatar(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
-    UserAvatar(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
-    UserAvatar(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    UserAvatar(1, 'Đỗ Duy Hào', 'assets/images/facebook.png', false),
+    UserAvatar(1, 'Trần Bửu Quyến', 'assets/images/google.png', false),
+    UserAvatar(1, 'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    UserAvatar(1, 'Đỗ Duy Hào', 'assets/images/facebook.png', false),
+    UserAvatar(1, 'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    UserAvatar(1, 'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
+    UserAvatar(1, 'Văn Bá Trung Thành', 'assets/images/backgourd.png', false),
   ];
   Stream<GroupModel>? groupCurrent;
   GroupModel? group;
+  late RxString curnetUser = "".obs;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    initCurrentUser();
     _startTimer();
   }
+
+  void initCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    curnetUser = (prefs.getString('Avatar') ??
+            "https://inkythuatso.com/uploads/thumbnails/800/2023/03/10-anh-dai-dien-trang-inkythuatso-03-15-27-10.jpg")
+        .obs;
+    print(curnetUser);
+  }
+
   late Timer _timer;
+
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       // Gọi hàm cần thiết ở đây
       _loadData();
-      groupCurrent = homeGroupController.groupCurrent; // Đây là Stream mà bạn cần theo dõi
+      groupCurrent =
+          homeGroupController.groupCurrent; // Đây là Stream mà bạn cần theo dõi
       // Cập nhật danh sách nhóm khi Stream thay đổi
       groupCurrent?.listen((GroupModel? currentGroup) {
         if (currentGroup != null) {
@@ -61,7 +83,8 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
       });
     });
   }
-  void _loadData() async{
+
+  void _loadData() async {
     await homeGroupController.GetOneGroup;
   }
 
@@ -72,71 +95,65 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
     super.dispose();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 200.0,
-            floating: false,
-            pinned: true,
-            backgroundColor: Color(0xFF8587F1),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.more_vert),
-                onPressed: () {
-                  showPopupMenu(context);
-                },
-              ),
-            ],
-            flexibleSpace: StreamBuilder<GroupModel>(
-              stream: groupCurrent ,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return FlexibleSpaceBar(
-                    title: Text(
-                      snapshot.data!.name.toString(),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                    background: Image.asset(
-                      'assets/images/backgroud_profile_page.png',
-                      fit: BoxFit.cover,
-                    ),
-                    titlePadding: EdgeInsets.only(left: 20, bottom: 20),
-                  );
-                } else {
-                  return FlexibleSpaceBar(
-                    title: Text(
-                      "Loading...",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                    background: Image.asset(
-                      'assets/images/backgroud_profile_page.png',
-                      fit: BoxFit.cover,
-                    ),
-                    titlePadding: EdgeInsets.only(left: 20, bottom: 20),
-                  );
-                }
+    return SafeArea(
+        child: Scaffold(
+      body: CustomScrollView(slivers: [
+        SliverAppBar(
+          expandedHeight: 200.0,
+          floating: false,
+          pinned: true,
+          backgroundColor: Color(0xFF8587F1),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.more_vert),
+              onPressed: () {
+                showPopupMenu(context);
               },
             ),
+          ],
+          flexibleSpace: StreamBuilder<GroupModel>(
+            stream: groupCurrent,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return FlexibleSpaceBar(
+                  title: Text(
+                    snapshot.data!.name.toString(),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  background: Image.asset(
+                    'assets/images/backgroud_profile_page.png',
+                    fit: BoxFit.cover,
+                  ),
+                  titlePadding: EdgeInsets.only(left: 20, bottom: 20),
+                );
+              } else {
+                return FlexibleSpaceBar(
+                  title: Text(
+                    "Loading...",
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  background: Image.asset(
+                    curnetUser.value,
+                    fit: BoxFit.cover,
+                  ),
+                  titlePadding: EdgeInsets.only(left: 20, bottom: 20),
+                );
+              }
+            },
           ),
-
-
-
-          SliverToBoxAdapter(
+        ),
+        SliverToBoxAdapter(
           child: Container(
             padding: EdgeInsets.all(0),
             child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 StreamBuilder<GroupModel>(
-                  stream: groupCurrent ,
+                  stream: groupCurrent,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Padding(
@@ -161,100 +178,105 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
                     }
                   },
                 ),
-            Container(
-              height: 100,
-              padding: EdgeInsets.only(left: 10, top: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ListMemberGroup()),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: Text(
-                        'Danh sách thành viên trong nhóm >',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                Container(
+                  height: 100,
+                  padding: EdgeInsets.only(left: 10, top: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListMemberGroup()),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Danh sách thành viên trong nhóm >',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-
-                  StreamBuilder <GroupModel>(
-                      stream: groupCurrent ,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                    return Row(
-                      children: [
-                        for (var i = 0; i < snapshot.data!.listMembers.length; i++)
-                          if (i < 5)
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: ClipOval(
-                                  child: Image.network(
-                                    snapshot.data!.listMembers[i].profilePicture,
-                                    width: 40,
-                                    height: 40,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        //if (homeGroupController.listUserMembers!.length > 5)
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => ListMemberGroup()),
-                                          );
-                            },
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: ClipOval(
-                                  child: Container(
-                                    color: Colors.grey, // Màu sẽ hiển thị dấu "xem thêm"
-                                    width: 40,
-                                    height: 40,
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.add,
-                                        color: Colors.white,
+                      StreamBuilder<GroupModel>(
+                          stream: groupCurrent,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Row(
+                                children: [
+                                  for (var i = 0;
+                                      i < snapshot.data!.listMembers.length;
+                                      i++)
+                                    if (i < 5)
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
+                                          child: ClipOval(
+                                            child: Image.network(
+                                              snapshot.data!.listMembers[i]
+                                                  .profilePicture,
+                                              width: 40,
+                                              height: 40,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  //if (homeGroupController.listUserMembers!.length > 5)
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ListMemberGroup()),
+                                      );
+                                    },
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: ClipOval(
+                                          child: Container(
+                                            color: Colors.grey,
+                                            // Màu sẽ hiển thị dấu "xem thêm"
+                                            width: 40,
+                                            height: 40,
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.add,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
+                                ],
+                              );
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Text(
+                                  'Loading members...',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    );}
-                      else{
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                          'Loading members...',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      );}
-                      }
+                              );
+                            }
+                          }),
+                    ],
                   ),
-                ],
-              ),
-            ),
-
+                ),
                 Container(
                   padding: EdgeInsets.only(left: 20),
                   child: Row(
@@ -289,34 +311,83 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
                               homeGroupController.loadFriends(context);
                             },
                             style: ElevatedButton.styleFrom(
-
                               backgroundColor: Color(0xFF8587F1),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(10,10,10,10),
+                              padding:
+                                  const EdgeInsets.fromLTRB(10, 10, 10, 10),
                               child: Text('Thêm thành viên'),
                             ),
                           ),
                         ),
                       ),
-
                     ],
-
-
                   ),
-
                 ),
-
                 Container(
                   margin: EdgeInsets.only(top: 20),
-                  height: 15,     // Chiều cao của thanh ngang
-                  width: 500,     // Độ dày của thanh ngang
+                  height: 15, // Chiều cao của thanh ngang
+                  width: 500, // Độ dày của thanh ngang
                   color: Color(0xC0C0C0C0),
                 ),
+                Card(
+                  elevation: 3,
+                  margin: EdgeInsets.all(8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundImage: NetworkImage(curnetUser.value),
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: TextFormField(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.bottomToTop,
+                                      child: CreatePostGroup(
+                                        statepost: false,
+                                        idGroup:
+                                            homeGroupController.group_id.value,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                decoration: InputDecoration(
+                                  hintText: "Bạn nghĩ gì?",
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                // Handle post button click
+
+                                // Add logic to post the content to your backend or perform other actions
+                              },
+                              child: Text("Đăng"),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Container(
                   margin: EdgeInsets.only(top: 20),
-                  height: 15,     // Chiều cao của thanh ngang
-                  width: 500,     // Độ dày của thanh ngang
+                  height: 15, // Chiều cao của thanh ngang
+                  width: 500, // Độ dày của thanh ngang
                   color: Color(0xC0C0C0C0),
                 ),
                 Padding(
@@ -339,24 +410,22 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
-
         ),
-          SliverFillRemaining(
-            child: TabBarView(
-              controller: _tabController,
-              children: <Widget>[
-                // Tab 1 content
-                _buildTabContentHotNews(''),
-                _buildTabContentForum(''),
-                _buildTabContentPost('content'),
-              ],
-            ),
+        SliverFillRemaining(
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              // Tab 1 content
+              _buildTabContentHotNews(''),
+              _buildTabContentForum(''),
+              _buildTabContentPost('content'),
+            ],
           ),
-          /*SliverList(
+        ),
+        /*SliverList(
             delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                 return ListTile(
@@ -366,10 +435,10 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
               childCount: 50, // Thay đổi số lượng phần tử theo nhu cầu của bạn
             ),
           ),*/
-      ]
-      ),
+      ]),
     ));
   }
+
   Widget _buildTab(String title) {
     return Tab(
       child: Container(
@@ -386,21 +455,34 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
       ),
     );
   }
+
   Widget _buildTabContentPost(String content) {
     return Center(
-        child: Image.asset("assets/images/khongbaiviet.png")
+      child: homeGroupController.listPost == []
+          ? Image.asset("assets/images/khongbaiviet.png")
+          : ListView.builder(
+
+              itemCount: homeGroupController.listPost.length,
+              itemBuilder: (context, index) {
+                final post = homeGroupController.listPost[index];
+                return AnimatedOpacity(
+                  duration: Duration(milliseconds: 100),
+                  opacity: 1,
+                  child: Home_Post(postModel: post),
+                );
+              },
+            ),
     );
   }
+
   Widget _buildTabContentForum(String content) {
-    return Center(
-        child: Image.asset("assets/images/forum_page.jpg")
-    );
+    return Center(child: Image.asset("assets/images/forum_page.jpg"));
   }
+
   Widget _buildTabContentHotNews(String content) {
-    return Center(
-        child: Image.asset("assets/images/hot_news_page.png")
-    );
+    return Center(child: Image.asset("assets/images/hot_news_page.png"));
   }
+
   Future<void> showPopupMenu(BuildContext context) async {
     if (await homeGroupController.isAdmin.value == true) {
       showMenu(
@@ -429,27 +511,26 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
           showDeleteOption(context);
         }
       });
+    } else {
+      showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(100, kToolbarHeight, 0, 0),
+        items: <PopupMenuEntry<String>>[
+          const PopupMenuItem<String>(
+            value: 'outgroup',
+            child: Text('Rời nhóm'),
+          ),
+        ],
+      ).then((value) {
+        // Xử lý khi chọn một tùy chọn
+        if (value == 'outgroup') {
+          // Thực hiện hành động outgroup
+          showOutGroupOption(context);
+        }
+      });
     }
-    else
-      {
-        showMenu(
-          context: context,
-          position: RelativeRect.fromLTRB(100, kToolbarHeight, 0, 0),
-          items: <PopupMenuEntry<String>>[
-            const PopupMenuItem<String>(
-              value: 'outgroup',
-              child: Text('Rời nhóm'),
-            ),
-          ],
-        ).then((value) {
-          // Xử lý khi chọn một tùy chọn
-          if (value == 'outgroup') {
-            // Thực hiện hành động outgroup
-            showOutGroupOption(context);
-          }
-        });
-      }
   }
+
   void showDeleteOption(BuildContext context) {
     showDialog(
       context: context,
@@ -467,8 +548,9 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
             TextButton(
               onPressed: () {
                 // Thực hiện xóa nhóm ở đây
-                homeGroupController.deleteGroup(context, homeGroupController.group_id.value);
-               // Navigator.of(context).pop(); // Đóng hộp thoại
+                homeGroupController.deleteGroup(
+                    context, homeGroupController.group_id.value);
+                // Navigator.of(context).pop(); // Đóng hộp thoại
               },
               child: Text("Có"),
             ),
@@ -477,6 +559,7 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
       },
     );
   }
+
   void showOutGroupOption(BuildContext context) {
     showDialog(
       context: context,
@@ -510,4 +593,3 @@ class _HomeGroupState extends State<HomeGroup> with SingleTickerProviderStateMix
     );
   }
 }
-
