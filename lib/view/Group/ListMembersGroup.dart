@@ -18,12 +18,6 @@ class _ListMemberGroupState extends State<ListMemberGroup> {
 
   final HomeGroupController homeGroupController = Get.put(HomeGroupController());
 
-  final List<UserList> userss = [
-    UserList(1,'Đỗ Duy Hào', 'assets/images/facebook.png'),
-    UserList(1,'Trần Bửu Quyến', 'assets/images/google.png'),
-    UserList(1,'Văn Bá Trung Thành', 'assets/images/backgourd.png'),
-    UserList(1,'Đỗ Duy Hào', 'assets/images/facebook.png'),
-  ];
   List<UserList> users = [];
   List<UserList> searchResults = [];
   Future<void> _mapUserMemberToUser() async {
@@ -99,6 +93,9 @@ class _ListMemberGroupState extends State<ListMemberGroup> {
                     if (homeGroupController.isAdmin.value == true)
                       return Column(
                         children: [
+                          if ((searchResults.isEmpty
+                              ? users[index].id
+                              : searchResults[index].id) != homeGroupController.adminPageCurrent.value)
                           ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(searchResults.isEmpty
@@ -111,17 +108,51 @@ class _ListMemberGroupState extends State<ListMemberGroup> {
                                   : searchResults[index].name,
                             ),
 
-                            trailing: ElevatedButton(
-                              onPressed: () {
-
-                                _showConfirmationDialog(context,users[index].id);
+                            trailing: PopupMenuButton<String>(
+                              onSelected: (value) {
+                                if (value == 'edit') {
+                                  // Xử lý sự kiện sửa
+                                  _showConfirmationChangeDialog(context, users[index].id);
+                                } else if (value == 'delete') {
+                                  // Xử lý sự kiện xóa
+                                  _showConfirmationDialog(context, users[index].id);
+                                }
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF8587F1),
-                              ),
-                              child: Text('Xóa'),
+                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'edit',
+                                  child: ListTile(
+                                    leading: Icon(Icons.edit),
+                                    title: Text('Chuyển trưởng nhóm'),
+                                  ),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'delete',
+                                  child: ListTile(
+                                    leading: Icon(Icons.delete),
+                                    title: Text('Đổi khỏi nhóm'),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                          ) else
+
+                              ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      searchResults.isEmpty
+                                          ? users[index].avatar
+                                          : searchResults[index].avatar),
+                                ),
+                                title: Text(
+                                  searchResults.isEmpty
+                                      ? users[index].name
+                                      : searchResults[index].name,
+                                ),
+                              ),
+
+
+
                           SizedBox(height: 15),
                         ],
                       );
@@ -206,6 +237,39 @@ class _ListMemberGroupState extends State<ListMemberGroup> {
                 homeGroupController.deleteMemberOutGroup(context, idMember);
                 removeUser(idMember);
                 Navigator.of(context).pop();
+              },
+              child: Text('Chắc chăn'),
+            ),
+          ],
+        );
+      },
+
+    );
+  }
+  void _showConfirmationChangeDialog(BuildContext context, int idMember) {
+    showDialog(
+      context: context,
+
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Xác nhận'),
+          content: Text('Bạn có chắc chắn xóa thành viên này khỏi nhóm'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Đóng hộp thoại và thực hiện tác vụ khi người dùng chọn Yes
+                Navigator.of(context).pop();
+                // Thực hiện tác vụ khi người dùng chọn Yes ở đây
+              },
+              child: Text('Không'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Đóng hộp thoại khi người dùng chọn No
+                homeGroupController.updateAdmin(context, idMember);
+                int count =0;
+                Navigator.of(context).popUntil((_) => count++ >= 2);
+
               },
               child: Text('Chắc chăn'),
             ),

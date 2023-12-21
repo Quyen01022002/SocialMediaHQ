@@ -1,17 +1,25 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/model/PageModel.dart';
 
 import '../model/PageLoad.dart';
+import '../model/UsersEnity.dart';
+import '../service/API_Friends.dart';
 import '../service/API_Page.dart';
+import '../view/Page/ListFriend.dart';
 
 class PageHomeController extends GetxController{
   RxInt page_id = 0.obs;
   PageModel? pageCurrent;
-
+  RxBool isAdmin = false.obs;
+  RxBool isFollow= false.obs;
   final textControllerDescriptionPage = TextEditingController();
   final textControllerNamePage = TextEditingController();
+
 
   Future<void> CreatePage(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -25,9 +33,13 @@ class PageHomeController extends GetxController{
         id: 0,
         description: description,
         createDate: DateTime.now(),
-        updateDate: DateTime.now());
+        updateDate: DateTime.now(),
+    adminId: adminId);
     PageModel? pageModel = await API_Page.addPage(newPage, token);
 
+    pageCurrent = pageModel;
+    page_id.value = pageModel!.id!;
+    GetOnePage(page_id.value, context);
   }
   Stream<PageLoad>? pageLoadCurrent;
   Future<void> GetOnePage(int page, BuildContext context) async {
@@ -35,15 +47,24 @@ class PageHomeController extends GetxController{
     final adminId = prefs.getInt('id')??0;
     final token = prefs.getString('token')??"";
     page_id.value = page;
-    final token2 = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb2R1eWhhbzc2NDBAZ21haWwuY29tIiwiaWF0IjoxNzAyNjczMjk0LCJleHAiOjE3MDI2NzQ3MzR9.7dCByBKr0QG6L0cR6egYm9wbm5j1_5eUotCUj4uKUGSOVcDwJ7ph24Ag_rTGUWbSuTum5PZadKibgEN5tgQo7g";
     PageModel? pageModel = await API_Page.getPageById(page_id.value, token);
+    isFollow.value = await API_Page.checkFollow(adminId, page_id.value, token);
+    int count = await API_Page.getCountFollow(page_id.value, token);
     pageCurrent = pageModel;
+    if (pageModel!= null)
+      {
+        if(pageModel.adminId == adminId)
+          isAdmin.value = true;
+        else
+          isAdmin.value = false;
+      }
     PageLoad pageLoad = PageLoad(
         pageModel: pageModel,
         isLiked: true,
-        isFollowing: true,
+        isFollowing: isFollow.value,
         countLiked: 12,
-        countFollowing: 15);
+        countFollowing: count);
+
     pageLoadCurrent = Stream.fromIterable([pageLoad!]);
     int i =0;
   }
@@ -70,7 +91,8 @@ class PageHomeController extends GetxController{
         id: page_id.value,
         createDate: page?.createDate,
         description: description,
-        updateDate: DateTime.now()
+        updateDate: DateTime.now(),
+      adminId: adminId
     );
 
     PageModel? pageModel = await API_Page.updatePage(updatePage, token);
@@ -103,10 +125,18 @@ class PageHomeController extends GetxController{
     List<PageModel>? resultAllPage = await API_Page.getAllPageList(token);
     List<PageModel>? resultFollowPage = await API_Page.getFollowPageList(token, userId);
     List<PageModel>? resultLikedPage = await API_Page.getLikedPageList(token, userId);
-
-    allPageStream = Stream.fromIterable([allPage!]);
-    followingPageStream = Stream.fromIterable([followingPage!]);
-    likedPageStream = Stream.fromIterable([likedPage!]);
+    if (resultAllPage == null)
+      allPageStream = Stream.fromIterable([]);
+    else
+    allPageStream = Stream.fromIterable([resultAllPage!]);
+    if (resultFollowPage==null)
+      followingPageStream = Stream.fromIterable([]);
+    else
+    followingPageStream = Stream.fromIterable([resultFollowPage!]);
+    if (resultLikedPage == null)
+      likedPageStream = Stream.fromIterable([]);
+    else
+    likedPageStream = Stream.fromIterable([resultLikedPage!]);
 
   }
 
@@ -127,8 +157,29 @@ class PageHomeController extends GetxController{
     GetOnePage(page_id.value, context);
   }
 
+  List<UserEnity>? listUserFr = [];
+  Future<void> loadFriends(BuildContext context) async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+    final token = prefs.getString('token') ?? "";
+    List<UserEnity>? result = await API_Friend.LoadListFriends(userId, token);
+    listUserFr = result;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ListFrScreen()),
+    );
+  }
 
 
+  Future<void> updateAdmin(BuildContext context, int iduser) async{
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+    final token = prefs.getString('token') ?? "";
+    await API_Page.updateAdmin(page_id.value,iduser, token);
+    GetOnePage(page_id.value, context);
+
+  }
 
 
 

@@ -12,6 +12,7 @@ class GroupModel {
   final DateTime? updatedDate;
   final List<UserMember> listMembers;
   final List<PostModel> listPost;
+  final int? adminId;
 
   GroupModel({
    required this.name,
@@ -21,6 +22,7 @@ class GroupModel {
     required this.updatedDate,
     required this.listMembers,
     required this.listPost,
+    required this.adminId,
 
 });
 
@@ -45,7 +47,8 @@ class GroupModel {
       description: json['description'] ?? '',
       name: json['name'] ?? '',
       listMembers: listUser,
-      listPost: listPost
+      listPost: listPost,
+      adminId: json['adminId'] ?? 0
     );
 
 

@@ -240,4 +240,21 @@ class API_Group{
       return null;
     }
   }
+
+  static Future<void> updateAdmin(int pageid, int iduser, String token) async{
+    final url = Uri.parse('$baseUrl/group/updateAdmin/$pageid');
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    final Map<String, dynamic> data = {
+      "adminId": iduser,
+      "groupId": pageid
+    };
+    final response = await http.put(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+  }
 }

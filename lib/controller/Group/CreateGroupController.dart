@@ -30,7 +30,8 @@ class GroupController extends GetxController{
         description: description,
         updatedDate: DateTime.now(),
         listMembers: [],
-        listPost: []
+        listPost: [],
+      adminId: 0
     );
 
     final token = prefs.getString('token')??"";

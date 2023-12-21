@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:socialmediahq/view/Page/ProPage.dart';
 
 import '../../controller/PageHomeController.dart';
 import 'ProfilePage.dart';
@@ -115,6 +116,12 @@ class _CreatePage2State extends State<CreatePage2> {
                             child: ElevatedButton(
                               onPressed: () {
                                 pageHomeController.CreatePage(context);
+                                Future.delayed(Duration(milliseconds: 300), () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => ProPage()),
+                                  );
+                                });
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Color(0xFF8587F1),

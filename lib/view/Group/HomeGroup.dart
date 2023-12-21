@@ -491,11 +491,11 @@ class _HomeGroupState extends State<HomeGroup>
         items: <PopupMenuEntry<String>>[
           const PopupMenuItem<String>(
             value: 'update',
-            child: Text('Update'),
+            child: Text('Cập nhật'),
           ),
           const PopupMenuItem<String>(
             value: 'delete',
-            child: Text('Delete'),
+            child: Text('Xóa nhóm'),
           ),
         ],
       ).then((value) {
