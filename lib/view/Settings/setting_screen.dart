@@ -5,11 +5,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
 import 'package:socialmediahq/controller/LoginController.dart';
+import 'package:socialmediahq/controller/MessageBoxController.dart';
 import 'package:socialmediahq/controller/ProfileController.dart';
 import 'package:socialmediahq/service/UserProvider.dart';
 import 'package:socialmediahq/service/googleLogin.dart';
 import 'package:socialmediahq/view/Group/HomeGroup.dart';
 import 'package:socialmediahq/view/Group/group_screen.dart';
+import 'package:socialmediahq/view/Message/BoxMess.dart';
+import 'package:socialmediahq/view/Message/MessagePage.dart';
 import 'package:socialmediahq/view/Page/CreatePage.dart';
 import 'package:socialmediahq/view/Page/HomePage.dart';
 import 'package:socialmediahq/view/Page/page_screen.dart';
@@ -28,6 +31,7 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   ProfileController settingController = Get.put(ProfileController());
   HomeGroupController homeGroupController = Get.put(HomeGroupController());
+  MessageBoxController messageBoxController = Get.put(MessageBoxController());
   @override
   Widget build(BuildContext context) {
     // final userProvider = Provider.of<UserProvider>(context);
@@ -140,11 +144,12 @@ class _SettingScreenState extends State<SettingScreen> {
                       children: [
                         GestureDetector(
                           onTap: () {
+
                             Navigator.push(
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeft,
-                                child: HomePage(),
+                                child: MessegeScreen(),
                               ),
                             );
                           },
