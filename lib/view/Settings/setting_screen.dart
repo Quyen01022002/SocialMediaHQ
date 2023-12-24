@@ -144,7 +144,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       children: [
                         GestureDetector(
                           onTap: () {
-
+                            messageBoxController.loadMessageScreen(context);
                             Navigator.push(
                               context,
                               PageTransition(
@@ -170,7 +170,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       width: 30,
                                       height: 40,
                                     ),
-                                    Text("Đã lưu")
+                                    Text("Tin nhắn")
                                   ],
                                 ),
                               ),

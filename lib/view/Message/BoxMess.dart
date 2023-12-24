@@ -54,11 +54,9 @@ class _MessegeScreenState extends State<MessegeScreen> {
   void onSearch(String keyword) {
     searchResults.clear();
     if (keyword.isNotEmpty) {
-      for (var user in users) {
-        if (user.name.toLowerCase().contains(keyword.toLowerCase())) {
-          searchResults.add(user);
-        }
-      }
+      searchResults.addAll(users.where((user) =>
+          user.name.toLowerCase().contains(keyword.toLowerCase())
+      ));
     }
     setState(() {});
   }
@@ -66,7 +64,7 @@ class _MessegeScreenState extends State<MessegeScreen> {
   @override
   void initState() {
     super.initState();
-_startTimer();
+    _startTimer();
 
   }
   List<UserMess> users  = [];
@@ -85,6 +83,7 @@ _startTimer();
 
 
   }
+  late String key;
 
   late Timer _timer;
   Stream<List<MessageBoxResponse>>? messageBoxStream;
@@ -102,6 +101,7 @@ _startTimer();
           });
         }
       });
+      onSearch(key);
     });
   }
   @override
@@ -145,10 +145,12 @@ _startTimer();
                         Padding(
                           padding: EdgeInsets.all(16.0),
                           child: TextField(
+
                             decoration: InputDecoration(
                               hintText: 'Tìm kiếm người dùng',
                             ),
                             onChanged: (text) {
+                              key = text;
                               onSearch(text);
                             },
                           ),
