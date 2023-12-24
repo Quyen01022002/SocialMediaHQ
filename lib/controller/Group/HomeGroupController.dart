@@ -271,3 +271,11 @@ class HomeGroupController extends GetxController{
       GetOneGroup(context, group_id.value);
     }
   }
+void UpdateUser(BuildContext context,int groupId,String imagePath) async {
+  final prefs = await SharedPreferences.getInstance();
+  final userId = prefs.getInt('id') ?? 0;
+  final token = prefs.getString('token') ?? "";
+  await API_Group.updateAvatar(userId,token,imagePath);
+
+
+}

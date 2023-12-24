@@ -151,7 +151,7 @@ class _GroupScreenState extends State<GroupScreen>  with SingleTickerProviderSta
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: EdgeInsets.only(bottom: 10),
+                            padding: EdgeInsets.only(bottom: 0),
                             child: Text('Thôi nhiều nhóm quá, tự tạo cho bản thân mình một nhóm "Thiên đường"',
                               style: TextStyle(
                                 fontSize: 18,

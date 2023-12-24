@@ -215,6 +215,26 @@ class API_Group{
 
 
   }
+  static Future<String> updateAvatar(int? userid,String token,String Avatar) async {
+    final url = Uri.parse('$baseUrl/group/$userid');
+
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',};
+
+// Tạo một Map chứa dữ liệu người dùng
+    final data = {
+      "avatar":Avatar,
+
+    };
+
+    await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+    return "Success";
+  }
   static Future<List<UserEnity>?> LoadListFriendsToAdd(int groupid, int userid, String token) async {
 
     final response = await http.get(
