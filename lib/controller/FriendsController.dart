@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/model/InteractionsEnity.dart';
+import 'package:socialmediahq/model/MessageModel.dart';
 import 'package:socialmediahq/service/API_Friends.dart';
+import 'package:socialmediahq/service/API_Message.dart';
 import 'package:socialmediahq/service/API_Post.dart';
 
 import '../model/UsersEnity.dart';
@@ -46,10 +48,19 @@ class FriendController extends GetxController {
       update();
     }
   }
-  void acceptFriends(int? friendID) async {
+  Future<void> acceptFriends(int? friendID) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? "";
+    final userId = prefs.getInt('id') ?? 0;
+
     API_Friend.acceptFriends(friendID, token);
+    MessageModel message1 = MessageModel(
+        id: 0,
+        userId: userId,
+        friendId: friendID,
+        content: "Bây giờ chúng ta đã là bạn bè",
+        createdDate: DateTime.now());
+    await API_Message.createMessage(token, message1);
   }
   void unFriends(int? friendID) async {
     final prefs = await SharedPreferences.getInstance();

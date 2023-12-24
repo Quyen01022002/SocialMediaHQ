@@ -124,6 +124,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF8587F1),
         title: Row(
           children: [
             CircleAvatar(
@@ -201,7 +202,7 @@ class ChatScreenState extends State<ChatScreen> {
       margin: EdgeInsets.all(8.0),
       padding: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: message.isMe ? Colors.blue : Colors.grey,
+        color: message.isMe ? Color(0xFF8587F1) : Colors.grey,
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Text(
