@@ -57,15 +57,7 @@ class _LoginscreenState extends State<Loginscreen> {
 
         final userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.setUser(userModel);
-        if (_currentUser != null) {
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeft,
-              child: DashBoard(),
-            ),
-          );
-        }
+
       });
     });
 
@@ -227,8 +219,8 @@ class _LoginscreenState extends State<Loginscreen> {
                           backgroundColor: Color(0xFF8587F1),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(125, 18, 125, 18),
-                          child: Text('LOGIN'),
+                          padding: const EdgeInsets.fromLTRB(100, 18, 125, 18),
+                          child: Text('LOGIN',style: TextStyle(color: Colors.white),),
                         ),
                       ),
                     ),

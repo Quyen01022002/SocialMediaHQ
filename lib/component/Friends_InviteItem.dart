@@ -33,8 +33,8 @@ class _ItemInviteState extends State<ItemInvite> {
             Padding(
               padding: const EdgeInsets.only(right: 18.0),
               child: ClipOval(
-                child: Image.asset(
-                  "assets/images/backgourd.png",
+                child: Image.network(
+                  widget.friends.avatarUrl.toString(),
 
                   width: 100,
                   height: 100,
@@ -54,8 +54,8 @@ class _ItemInviteState extends State<ItemInvite> {
                 Row(
                   children: [
                     ClipOval(
-                      child: Image.asset(
-                        "assets/images/backgourd.png",
+                      child: Image.network(
+                        widget.friends.avatarUrl.toString(),
                         width: 15,
                         height: 15,
                         fit: BoxFit.cover,
