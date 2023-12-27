@@ -54,13 +54,7 @@ class FriendController extends GetxController {
     final userId = prefs.getInt('id') ?? 0;
 
     API_Friend.acceptFriends(friendID, token);
-    MessageModel message1 = MessageModel(
-        id: 0,
-        userId: userId,
-        friendId: friendID,
-        content: "Bây giờ chúng ta đã là bạn bè",
-        createdDate: DateTime.now());
-    await API_Message.createMessage(token, message1);
+    await API_Message.createFirstMessage(token, friendID!);
   }
   void unFriends(int? friendID) async {
     final prefs = await SharedPreferences.getInstance();
