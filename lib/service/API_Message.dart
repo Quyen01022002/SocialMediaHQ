@@ -48,6 +48,35 @@ class API_Message{
 
   }
 
+  static Future<MessageModel?> createFirstMessage(String token, int friendId) async{
+    final url = Uri.parse('$baseUrl/message/firstmessage?friendshipid=$friendId');
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    final response = await http.post(
+        url,
+        headers: headers
+    );
+    if (response.statusCode == 200) {
+      final responseData = response.body;
+      if (responseData.isNotEmpty){
+        ApiReponse<MessageModel> listMessage =
+        ApiReponse<MessageModel>.fromJson(responseData,
+              (dynamic json) =>
+              MessageModel.fromJson(json),);
+        return listMessage.payload;
+      }
+      else
+      {
+        return null;
+      }
+    } else {
+      // Handle error scenarios here
+      return null;
+    }
+  }
+
   static Future<List<MessageModel>?> getMessage(String token, int userId, int friendId) async{
     final url = Uri.parse('$baseUrl/message/?userId=$userId&friendId=$friendId');
     final headers = {
