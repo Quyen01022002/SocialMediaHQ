@@ -108,7 +108,7 @@ class _Home_PostState extends State<Home_Post> {
                   GestureDetector(
                     onTap: (){
                       curnetUser==widget.postModel.createBy.id?
-                      _showBottomSheet(context,widget.postModel,home_postcontroller):(print(""+ curnetUser.toString()+"id"+widget.postModel.createBy.id.toString()));
+                      _showBottomSheet(context,widget.postModel,home_postcontroller):_showBottomSheetReport(context,widget.postModel,home_postcontroller);
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(right: 16.0),
@@ -295,6 +295,29 @@ void _showBottomSheet(BuildContext context,PostModel post,HomeController home_po
               title: Text('Xóa bài viết'),
               onTap: () {
                 _showDeleteConfirmationDialog(context,post,home_postcontroller);
+              },
+            ),
+            // Add more items as needed
+          ],
+        ),
+      );
+    },
+  );
+}
+void _showBottomSheetReport(BuildContext context,PostModel post,HomeController home_postcontroller) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext builderContext) {
+      return Container(
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.update),
+              title: Text('Báo cáo bái viết'),
+              onTap: () {
+                home_postcontroller.postid.value =
+                    post.id;
+                home_postcontroller.ReportPost();
               },
             ),
             // Add more items as needed

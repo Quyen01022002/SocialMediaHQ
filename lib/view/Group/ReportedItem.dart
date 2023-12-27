@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:socialmediahq/controller/HomeController.dart';
 
 class ReportedItem extends StatefulWidget {
   final String reportedBy;
@@ -18,6 +20,15 @@ class ReportedItem extends StatefulWidget {
 }
 
 class _ReportedItemState extends State<ReportedItem> {
+  final HomeController homeGroupController =
+  Get.put(HomeController());
+  late bool stateAccept=false;
+  late bool stateDeny=false;
+  @override
+  void initState() {
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -49,20 +60,25 @@ class _ReportedItemState extends State<ReportedItem> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Add your logic for accepting the report here
-                        // For example: widget.acceptReport();
+                        homeGroupController.postid.value=widget.id;
+                        homeGroupController.DeletePost();
+                        setState(() {
+                          stateAccept=true;
+                        });
                       },
-                      child: Text('Chấp nhận'),
+                      child: stateAccept==false?Text('Chấp nhận'):Text('Đã chấp nhận'),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Add your logic for rejecting the report here
-                        // For example: widget.rejectReport();
+                        homeGroupController.DeleteReport(widget.id);
+                        setState(() {
+                          stateDeny=true;
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.red, // Màu đỏ cho nút từ chối
                       ),
-                      child: Text('Từ chối'),
+                      child: stateDeny?Text('Từ chối'):Text('Đã từ chối'),
                     ),
                   ],
                 ),

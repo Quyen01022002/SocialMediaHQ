@@ -29,7 +29,7 @@ class _ItemInviteState extends State<ItemFollow> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(6, 5, 26, 5),
+      padding: const EdgeInsets.fromLTRB(6, 5, 6, 5),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[300],
@@ -109,8 +109,8 @@ class _ItemInviteState extends State<ItemFollow> {
                                   },
                                   child: Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(45, 10, 45, 10),
-                                    child: Text("Thêm Bạn Bè"),
+                                        const EdgeInsets.fromLTRB(25, 10, 25, 10),
+                                    child: Text("Thêm Bạn Bè",style: TextStyle(color:Colors.white),),
                                   ))
                               : ElevatedButton(
                                   style: ElevatedButton.styleFrom(

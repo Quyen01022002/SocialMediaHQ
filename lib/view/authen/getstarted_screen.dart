@@ -141,8 +141,8 @@ class _Getstarted_ScreenState extends State<Getstarted_Screen> {
                   backgroundColor: Color(0xFF8587F1),
                 ),
                 child:  Padding(
-                  padding:  const EdgeInsets.fromLTRB(125, 18, 125, 18),
-                  child: Text('GET STARTED'),
+                  padding:  const EdgeInsets.fromLTRB(110, 18, 110, 18),
+                  child: Text('GET STARTED',style: TextStyle(color: Colors.white),),
                 ),
               )
             )

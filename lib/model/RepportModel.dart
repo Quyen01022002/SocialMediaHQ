@@ -7,7 +7,7 @@ class ReportModel{
   final CreateBy reporterID;
   final PostModel reportedPostID;
   final String reason;
-  final DateTime? timestamp;
+  final String? timestamp;
   final String? status;
 
   ReportModel({
@@ -29,7 +29,7 @@ class ReportModel{
       reportedPostID: Post,
       reason: json['reason'] ?? '',
       timestamp: json['timestamp'] ?? '',
-      status: json['status'] ?? 0,
+      status: json['status'] ?? '',
     );
   }
 

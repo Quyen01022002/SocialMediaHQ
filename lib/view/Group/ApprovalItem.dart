@@ -1,84 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../controller/Group/HomeGroupController.dart';
 import 'ReportedItem.dart';
 
-class ApprovalItem extends StatelessWidget {
-  final String userName;
-  final String content;
-
-  ApprovalItem({required this.userName, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: AssetImage('assets/default_avatar.jpg'), // Thay đổi thành đường dẫn hoặc widget của bạn
-                    ),
-                    SizedBox(width: 8.0),
-                    Text(
-                      userName,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  content,
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 8.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  // Xử lý khi nút được nhấn (phê duyệt)
-                },
-                style: ElevatedButton.styleFrom(primary: Colors.green),
-                child: Text('Phê Duyệt'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Xử lý khi nút được nhấn (từ chối)
-                },
-                style: ElevatedButton.styleFrom(primary: Colors.red),
-                child: Text('Từ Chối'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class GroupManagementPage extends StatefulWidget {
   @override
@@ -88,11 +13,15 @@ class GroupManagementPage extends StatefulWidget {
 class _GroupManagementPageState extends State<GroupManagementPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final HomeGroupController homeGroupController =
+      Get.put(HomeGroupController());
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    homeGroupController.GetOneGroup;
+    homeGroupController.loadReport(homeGroupController.group_id.value);
+    _tabController = TabController(length: 1, vsync: this);
   }
 
   @override
@@ -106,7 +35,6 @@ class _GroupManagementPageState extends State<GroupManagementPage>
             controller: _tabController,
             tabs: [
               Tab(text: "Báo cáo"),
-              Tab(text: "Duyệt Bài"),
             ],
           ),
         ),
@@ -147,10 +75,14 @@ class _GroupManagementPageState extends State<GroupManagementPage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Tên Nhóm",
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                            homeGroupController.nameGroup.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 16),
                           ),
-                          Text("Nhóm công khai . 2 thành viên")
+                          Text("Nhóm công khai . " +
+                              homeGroupController.listUserMembers!.length
+                                  .toString() +
+                              " thành viên")
                         ],
                       ),
                     ),
@@ -163,35 +95,21 @@ class _GroupManagementPageState extends State<GroupManagementPage>
                   controller: _tabController,
                   children: [
                     // Tab 1: Báo cáo
-                    ListView(
-                      children: [
-                        ApprovalItem(
-                          userName: 'User1',
-                          content: 'Nội dung cần phê duyệt 1...',
-                        ),
-                        ApprovalItem(
-                          userName: 'User2',
-                          content: 'Nội dung cần phê duyệt 2...',
-                        ),
-                        // Add more ApprovalItem widgets as needed
-                      ],
-                    ),
+                   ListView.builder(
+                        itemCount: homeGroupController.listReport.length,
+                        itemBuilder: (context, index) {
+                          return ReportedItem(
+                            id: homeGroupController.listReport[index].id,
+                            imageUrl: homeGroupController.listReport[index].reportedPostID.listAnh[0].link_picture,
+                            reason: homeGroupController.listReport[index].reason,
+                            reportedBy: homeGroupController.listReport[index].reporterID.firstName +
+                                " " +
+                                homeGroupController.listReport[index].reporterID.lastName,
+                          );
+                        },
+                      ),
+
                     // Tab 2: Duyệt Bài
-                    ListView(
-                      children: [
-                        ReportedItem(
-                          id: 1,
-                          imageUrl: '',
-                          reason: '',
-                          reportedBy:'' ,
-                        ),
-                        ApprovalItem(
-                          userName: 'User4',
-                          content: 'Nội dung cần duyệt bài 2...',
-                        ),
-                        // Add more ApprovalItem widgets as needed
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -208,4 +126,3 @@ class _GroupManagementPageState extends State<GroupManagementPage>
     super.dispose();
   }
 }
-

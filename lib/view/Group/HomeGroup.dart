@@ -128,8 +128,8 @@ class _HomeGroupState extends State<HomeGroup>
                   ),
                   background: GestureDetector(
                     onTap: (){
-
-                        _pickImage(context, ImageSource.gallery);
+                        print(homeGroupController.group_id.value);
+                        _pickImage(context, ImageSource.gallery, homeGroupController.group_id.value);
                     },
                     child: Image.asset(
                       'assets/images/backgroud_profile_page.png',
@@ -588,7 +588,7 @@ class _HomeGroupState extends State<HomeGroup>
     );
   }
 }
-void _pickImage(BuildContext context, ImageSource source) async {
+void _pickImage(BuildContext context, ImageSource source,int groupId) async {
   XFile? pickedImage = await ImagePicker().pickImage(source: source);
 
   if (pickedImage != null) {
@@ -596,7 +596,7 @@ void _pickImage(BuildContext context, ImageSource source) async {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            DisplayBackGroudGroup(imagePath: pickedImage.path),
+            DisplayBackGroudGroup(imagePath: pickedImage.path,groupId: groupId),
       ),
     );
   }

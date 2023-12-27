@@ -10,11 +10,12 @@ import '../model/PageLoad.dart';
 import '../model/UsersEnity.dart';
 import '../service/API_Friends.dart';
 import '../service/API_Page.dart';
+import '../service/API_ProFile.dart';
 import '../view/Page/ListFriend.dart';
 
 class PageHomeController extends GetxController{
   RxInt page_id = 0.obs;
-  PageModel? pageCurrent;
+  PageModel? pageCurrent; RxString imagePath = ''.obs;
   RxBool isAdmin = false.obs;
   RxBool isFollow= false.obs;
   final textControllerDescriptionPage = TextEditingController();
@@ -34,7 +35,7 @@ class PageHomeController extends GetxController{
         description: description,
         createDate: DateTime.now(),
         updateDate: DateTime.now(),
-    adminId: adminId);
+    adminId: adminId, Avatar: '');
     PageModel? pageModel = await API_Page.addPage(newPage, token);
 
     pageCurrent = pageModel;
@@ -91,6 +92,7 @@ class PageHomeController extends GetxController{
         id: page_id.value,
         createDate: page?.createDate,
         description: description,
+        Avatar: '',
         updateDate: DateTime.now(),
       adminId: adminId
     );
@@ -180,7 +182,20 @@ class PageHomeController extends GetxController{
     GetOnePage(page_id.value, context);
 
   }
+  void UpdateUser(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+    await API_Page.updateAvatar(page_id.value,token,imagePath.value);
 
+
+  }
+  void UpdateBack(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? "";
+    await API_Page.updateBack(page_id.value,token,imagePath.value);
+
+
+  }
 
 
 }

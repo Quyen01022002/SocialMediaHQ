@@ -258,5 +258,44 @@ class API_Page{
       body: jsonEncode(data),
     );
   }
+  static Future<String> updateAvatar(int? userid,String token,String Avatar) async {
+    final url = Uri.parse('$baseUrl/page/$userid');
 
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',};
+
+// Tạo một Map chứa dữ liệu người dùng
+    final data = {
+      "avatar":Avatar,
+
+    };
+
+    await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+    return "Success";
+  }
+  static Future<String> updateBack(int? userid,String token,String Avatar) async {
+    final url = Uri.parse('$baseUrl/page/back/$userid');
+
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',};
+
+// Tạo một Map chứa dữ liệu người dùng
+    final data = {
+      "avatar":Avatar,
+
+    };
+
+    await http.patch(
+      url,
+      headers: headers,
+      body: jsonEncode(data),
+    );
+    return "Success";
+  }
 }

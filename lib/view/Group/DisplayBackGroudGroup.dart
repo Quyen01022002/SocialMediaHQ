@@ -5,12 +5,14 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+import 'package:socialmediahq/controller/Group/HomeGroupController.dart';
 
 import '../../controller/UpdateUser.dart';
 
 class DisplayBackGroudGroup extends StatefulWidget {
   final String imagePath;
-  DisplayBackGroudGroup({required this.imagePath});
+  final int groupId;
+  DisplayBackGroudGroup({required this.imagePath,required this.groupId});
 
   @override
   _DisplaySelectedImagePageState createState() =>
@@ -18,7 +20,7 @@ class DisplayBackGroudGroup extends StatefulWidget {
 }
 
 class _DisplaySelectedImagePageState extends State<DisplayBackGroudGroup> {
-  final UpdateUserController myController = Get.put(UpdateUserController());
+  final HomeGroupController myController = Get.put(HomeGroupController());
   String? caption;
   late bool statepost;
 
@@ -40,7 +42,6 @@ class _DisplaySelectedImagePageState extends State<DisplayBackGroudGroup> {
         final responseString = String.fromCharCodes(responseData);
         final jsonMap = jsonDecode(responseString);
         final imageUrl = jsonMap['url'];
-
         myController.imagePath.value = imageUrl;
         print('Image URL: $imageUrl');
       } else {
@@ -71,7 +72,7 @@ class _DisplaySelectedImagePageState extends State<DisplayBackGroudGroup> {
                       statepost = true;
                     });
                     await _uploadImages();
-                    myController.UpdateBack(context);
+                    myController.UpdateUser(context,widget.groupId);
                     Navigator.pop(
                       context,
                       {

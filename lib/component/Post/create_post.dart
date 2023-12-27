@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/controller/CreatePost.dart';
 
 class CreatePost extends StatefulWidget {
@@ -22,10 +24,19 @@ class _CreatePostState extends State<CreatePost> {
   late bool statepost;
   late bool statecontent = false;
   CreatePostController postController = new CreatePostController();
+  late RxString curnetUser = "".obs;
 
+  void initCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    curnetUser = (prefs.getString('Avatar') ??
+        "https://inkythuatso.com/uploads/thumbnails/800/2023/03/10-anh-dai-dien-trang-inkythuatso-03-15-27-10.jpg")
+        .obs;
+    print(curnetUser);
+  }
   @override
   void initState() {
     super.initState();
+    initCurrentUser();
     statepost = widget.statepost;
   }
   Future<void> _getImagesFromGallery() async {
@@ -163,8 +174,8 @@ class _CreatePostState extends State<CreatePost> {
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: ClipOval(
-                                child: Image.asset(
-                                  "assets/images/backgourd.png",
+                                child: Image.network(
+                                  curnetUser.value,
                                   fit: BoxFit.cover,
                                   width: 50,
                                   height: 50,

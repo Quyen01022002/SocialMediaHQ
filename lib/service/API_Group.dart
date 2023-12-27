@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:socialmediahq/model/ApiReponse.dart';
 import 'package:socialmediahq/model/GroupModel.dart';
+import 'package:socialmediahq/model/RepportModel.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/service/API_ProFile.dart';
 import 'package:socialmediahq/service/const.dart';
@@ -276,5 +277,52 @@ class API_Group{
       headers: headers,
       body: jsonEncode(data),
     );
+  }
+  static Future<List<ReportModel>?> LoadListReport(int groupid, String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/report/$groupid'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = response.body;
+
+      if (responseData.isNotEmpty) {
+        String utf8Data = utf8.decode(responseData.runes.toList());
+        ApiReponse<List<ReportModel>> listPost =
+        ApiReponse<List<ReportModel>>.fromJson(
+          utf8Data,
+              (dynamic json) =>
+          List<ReportModel>.from(json.map((x) => ReportModel.fromJson(x))),
+        );
+        return listPost.payload;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+  static void ReportPost(int? postId, String token) async {
+    await http.post(
+      Uri.parse('$baseUrl/report/post/$postId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+
+  }
+  static void deleteReport(int? idreport, String token) async {
+    await http.delete(
+      Uri.parse('$baseUrl/report/$idreport'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+
   }
 }

@@ -2,6 +2,9 @@
 // TRANG NÀY LÀ TRANG NHÁP
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'DisplaySelectedImagePage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -45,9 +48,12 @@ class MyCustomScrollView extends StatelessWidget {
               ],
             ),
 
-            background: Image.asset(
-              'assets/images/backgroud_profile_page.png', // Đặt đường dẫn hình ảnh của bạn ở đây
-              fit: BoxFit.cover,
+            background: GestureDetector(
+
+              child: Image.asset(
+                'assets/images/backgroud_profile_page.png', // Đặt đường dẫn hình ảnh của bạn ở đây
+                fit: BoxFit.cover,
+              ),
             ),
 
             titlePadding: EdgeInsets.only(left: 20, bottom: 20),
@@ -71,6 +77,19 @@ class MyCustomScrollView extends StatelessWidget {
         
 
       ],
+    );
+  }
+}
+void _pickImage(BuildContext context, ImageSource source,int groupId) async {
+  XFile? pickedImage = await ImagePicker().pickImage(source: source);
+
+  if (pickedImage != null) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            DisplaySelectedPage(imagePath: pickedImage.path,pageId: groupId),
+      ),
     );
   }
 }

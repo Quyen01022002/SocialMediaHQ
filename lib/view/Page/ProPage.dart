@@ -3,12 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/controller/PageHomeController.dart';
 import 'package:socialmediahq/view/Page/ListFriend.dart';
 import 'package:socialmediahq/view/Page/UpdatePage.dart';
 
+import '../../component/Post/create_post_Group.dart';
 import '../../model/PageLoad.dart';
 import '../../model/PageModel.dart';
+import 'DisplaySelectedImagePage.dart';
 
 class ProPage extends StatefulWidget {
   const ProPage({super.key});
@@ -20,13 +25,22 @@ class ProPage extends StatefulWidget {
 class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
 
   final PageHomeController pageHomeController = Get.put(PageHomeController());
-  late TabController _tabController;
   Stream<PageLoad>? pageLoadCurrent;
   PageLoad? pageLoad;
+  late RxString curnetUser = "".obs;
+
+  void initCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    curnetUser = (prefs.getString('Avatar') ??
+        "https://inkythuatso.com/uploads/thumbnails/800/2023/03/10-anh-dai-dien-trang-inkythuatso-03-15-27-10.jpg")
+        .obs;
+    print(curnetUser);
+  }
+
   @override
   void initState() {
     super.initState();
-     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    initCurrentUser();
      _startTimer();
   }
   late Timer _timer;
@@ -48,7 +62,6 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _timer.cancel();
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -74,13 +87,18 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                           height: 280,
                           child: Stack(
                             children: [
-                              Image.asset(
-                                "assets/images/backgroud_profile_page.png",
-                                fit: BoxFit.cover,
-                                width: MediaQuery
-                                    .of(context)
-                                    .size
-                                    .width,
+                              GestureDetector(
+                                onTap: (){
+                                  _pickImage(context, ImageSource.gallery, pageHomeController.page_id.value);
+                                },
+                                child: Image.asset(
+                                  "assets/images/backgroud_profile_page.png",
+                                  fit: BoxFit.cover,
+                                  width: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width,
+                                ),
                               ),
                               Positioned(
                                   bottom: 0,
@@ -93,11 +111,27 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                                     child: Padding(
                                       padding: const EdgeInsets.all(4.0),
                                       child: ClipOval(
-                                        child: Image.asset(
-                                          "assets/images/backgourd.png",
-                                          width: 150,
-                                          height: 150,
-                                          fit: BoxFit.cover,
+                                        child: GestureDetector(
+                                          onTap: (){
+                                            _pickImage(context, ImageSource.gallery, pageHomeController.page_id.value);
+                                          },
+                                          child:Image.network(
+                                            snapshot.data!.pageModel!.Avatar.toString(),
+                                            width: 150,
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              // Xử lý khi có lỗi tải ảnh từ liên kết
+                                              return
+                                                Image.network(
+                                                snapshot.data!.pageModel!.Avatar.toString(), // Thay đổi thành đường dẫn ảnh mặc định của bạn
+                                                width: 150,
+                                                height: 150,
+                                                fit: BoxFit.cover,
+                                              );
+                                            },
+                                          ),
+
                                         ),
                                       ),
                                     ),
@@ -221,32 +255,51 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                             ],
                           ),
                         ),
-
+                        Card(
+                          elevation: 3,
+                          margin: EdgeInsets.all(8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(curnetUser.value),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: TextFormField(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageTransition(
+                                              type: PageTransitionType.bottomToTop,
+                                              child: CreatePostGroup(
+                                                statepost: false,
+                                                idGroup:
+                                                pageHomeController.page_id.value,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        decoration: InputDecoration(
+                                          hintText: "Bạn nghĩ gì?",
+                                          border: InputBorder.none,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         Container(
                           margin: EdgeInsets.only(top: 20),
                           height: 15, // Chiều cao của thanh ngang
                           width: 500, // Độ dày của thanh ngang
                           color: Color(0xC0C0C0C0),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Container(
-                            color: Colors.white,
-                            child: TabBar(
-                              controller: _tabController,
-                              tabs: [
-                                _buildTab('Ghim'),
-                                _buildTab('Bài viết'),
-                                _buildTab('Phương tiện'),
-                              ],
-                              indicator: BoxDecoration(
-                                color: Color(0xFFF1F1FE),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              labelColor: Color(0xFF2F80ED),
-                              unselectedLabelColor: Colors.black,
-                            ),
-                          ),
                         ),
                       ],
                     );}
@@ -321,26 +374,6 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
                               width: 500, // Độ dày của thanh ngang
                               color: Color(0xC0C0C0C0),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Container(
-                                color: Colors.white,
-                                child: TabBar(
-                                  controller: _tabController,
-                                  tabs: [
-                                    _buildTab('Ghim'),
-                                    _buildTab('Bài viết'),
-                                    _buildTab('Phương tiện'),
-                                  ],
-                                  indicator: BoxDecoration(
-                                    color: Color(0xFFF1F1FE),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  labelColor: Color(0xFF2F80ED),
-                                  unselectedLabelColor: Colors.black,
-                                ),
-                              ),
-                            ),
                           ],
                         );
                       }
@@ -368,15 +401,7 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
             ),
           ),
           SliverFillRemaining(
-            child: TabBarView(
-              controller: _tabController,
-              children: <Widget>[
-                // Tab 1 content
-                _buildTabContentHotNews(''),
-                _buildTabContentForum(''),
-                _buildTabContentPost('content'),
-              ],
-            ),
+            child: Text("Quyến"),
           ),
 
 
@@ -525,4 +550,17 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
     );
   }
 
+}
+void _pickImage(BuildContext context, ImageSource source,int groupId) async {
+  XFile? pickedImage = await ImagePicker().pickImage(source: source);
+
+  if (pickedImage != null) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            DisplaySelectedPage(imagePath: pickedImage.path,pageId: groupId),
+      ),
+    );
+  }
 }
