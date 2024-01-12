@@ -26,8 +26,5 @@ jobs:
     - name: Build APK
       run: flutter build apk
 
-    - name: Deploy to Firebase
-      uses: w9jds/firebase-action@latest
-      with:
-        args: deploy --token=$FIREBASE_TOKEN
+   
 
