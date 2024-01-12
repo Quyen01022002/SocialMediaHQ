@@ -57,7 +57,6 @@ class _LoginscreenState extends State<Loginscreen> {
 
         final userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.setUser(userModel);
-
       });
     });
 
@@ -71,22 +70,13 @@ class _LoginscreenState extends State<Loginscreen> {
         children: [
           Image.asset(
             'assets/images/backgourd.png',
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
-            height: MediaQuery
-                .of(context)
-                .size
-                .height,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
             fit: BoxFit.cover,
           ),
           Image.asset(
             'assets/images/login-back.png',
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
+            width: MediaQuery.of(context).size.width,
             height: 280,
             fit: BoxFit.cover,
           ),
@@ -94,10 +84,7 @@ class _LoginscreenState extends State<Loginscreen> {
             duration: const Duration(milliseconds: 500),
             bottom: animated ? 0 : -200,
             child: Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               height: 560,
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -183,30 +170,32 @@ class _LoginscreenState extends State<Loginscreen> {
                     const SizedBox(height: 36),
                     Center(
                       child: ElevatedButton(
-                        onPressed: ()  {
+                        onPressed: () {
                           myController.email.value =
                               myController.textControllerEmail.text;
                           myController.pass.value =
                               myController.textControllerPass.text;
-                           myController.login(context);
+                          myController.login(context);
 
                           Future.delayed(Duration(milliseconds: 500), () {
-                            if (myController.stateLogin != null && myController.stateLogin != "") {
+                            if (myController.stateLogin != null &&
+                                myController.stateLogin != "") {
                               Flushbar(
                                 flushbarPosition: FlushbarPosition.TOP,
                                 title: "Đăng nhập",
                                 duration: Duration(seconds: 2),
-                                icon: myController.stateLogin == "Đăng nhập thất bại"
+                                icon: myController.stateLogin ==
+                                        "Đăng nhập thất bại"
                                     ? Icon(
-                                  Icons.close,
-                                  size: 30,
-                                  color: Colors.red,
-                                )
+                                        Icons.close,
+                                        size: 30,
+                                        color: Colors.red,
+                                      )
                                     : Icon(
-                                  Icons.check_circle,
-                                  size: 30,
-                                  color: Colors.green,
-                                ),
+                                        Icons.check_circle,
+                                        size: 30,
+                                        color: Colors.green,
+                                      ),
                                 message: myController.stateLogin.toString(),
                               )..show(context);
                             }
@@ -220,7 +209,10 @@ class _LoginscreenState extends State<Loginscreen> {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(100, 18, 125, 18),
-                          child: Text('LOGIN',style: TextStyle(color: Colors.white),),
+                          child: Text(
+                            'LOGIN',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
@@ -230,7 +222,7 @@ class _LoginscreenState extends State<Loginscreen> {
                         Text(
                           "OR LOG IN BY",
                           style:
-                          TextStyle(color: Color(0xFF606060), fontSize: 14),
+                              TextStyle(color: Color(0xFF606060), fontSize: 14),
                         ),
                         const SizedBox(height: 6),
                         Padding(
@@ -265,8 +257,9 @@ class _LoginscreenState extends State<Loginscreen> {
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeft,
-                                child: SignUpScreeen(animated: false,state: false,
-
+                                child: SignUpScreeen(
+                                  animated: false,
+                                  state: false,
                                 ),
                               ),
                             );
@@ -306,6 +299,4 @@ class _LoginscreenState extends State<Loginscreen> {
       animated = true;
     });
   }
-
-
 }

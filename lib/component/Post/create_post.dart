@@ -174,8 +174,8 @@ class _CreatePostState extends State<CreatePost> {
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: ClipOval(
-                                child: Image.network(
-                                  curnetUser.value,
+                                child:  Image.asset(
+                                  "assets/images/backgourd.png",
                                   fit: BoxFit.cover,
                                   width: 50,
                                   height: 50,

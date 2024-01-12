@@ -401,7 +401,7 @@ class _ProPageState extends State<ProPage> with SingleTickerProviderStateMixin {
             ),
           ),
           SliverFillRemaining(
-            child: Text("Quyến"),
+            child: Text(""),
           ),
 
 
