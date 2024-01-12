@@ -161,7 +161,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                   borderRadius: BorderRadius.circular(12)),
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(18, 18, 118, 18),
+                                    const EdgeInsets.fromLTRB(18, 18, 102, 18),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

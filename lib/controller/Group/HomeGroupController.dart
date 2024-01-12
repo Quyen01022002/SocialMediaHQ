@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/model/GroupMemberRequest.dart';
 import 'package:socialmediahq/model/GroupModel.dart';
 import 'package:socialmediahq/model/PostModel.dart';
+import 'package:socialmediahq/model/RepportModel.dart';
 import 'package:socialmediahq/model/UsersEnity.dart';
 import 'package:socialmediahq/view/Group/AddMembers.dart';
 import 'package:socialmediahq/view/Group/HomeGroup.dart';
@@ -17,10 +18,12 @@ import '../../service/API_Group.dart';
 class HomeGroupController extends GetxController{
   RxString nameGroup = "".obs;
   RxString descriptionGroup = "".obs;
+  RxString imagePath = ''.obs;
   RxInt group_id = 0.obs;
   RxBool isAdmin = false.obs;
   List<UserMember>? listUserMembers=[];
   List<PostModel> listPost=[];
+  List<ReportModel> listReport=[];
   RxInt adminPageCurrent = 0.obs;
   final textControllerMota = TextEditingController();
   final textControllerNameGroup = TextEditingController();
@@ -270,4 +273,30 @@ class HomeGroupController extends GetxController{
       await API_Group.updateAdmin(group_id.value, iduser, token);
       GetOneGroup(context, group_id.value);
     }
+  void UpdateUser(BuildContext context,int groupId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id') ?? 0;
+    final token = prefs.getString('token') ?? "";
+    await API_Group.updateAvatar(userId,token,imagePath.value);
+
+
+  }
+  void loadReport(int groupId) async
+  {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+            final token = prefs.getString('token') ?? "";
+      List<ReportModel>? result = await API_Group.LoadListReport(groupId,token);
+      if (result != null) {
+
+        listReport.clear();
+        listReport.addAll(result);
+        update();
+      }
+    }
+    finally
+    {
+
+    }
+  }
   }

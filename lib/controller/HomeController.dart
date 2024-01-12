@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/model/InteractionsEnity.dart';
+import 'package:socialmediahq/service/API_Group.dart';
 import 'package:socialmediahq/service/API_Post.dart';
 
 import '../model/PostModel.dart';
@@ -58,6 +59,32 @@ class HomeController extends GetxController {
       final userId = prefs.getInt('id') ?? 0;
       final token = prefs.getString('token') ?? "";
       API_Post.deletePost(postid.value,token);
+    }
+    finally
+    {
+      isloaded(false);
+    }
+  }
+  void DeleteReport(int reportid) async
+  {
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? "";
+      API_Group.deleteReport(reportid,token);
+    }
+    finally
+    {
+      isloaded(false);
+    }
+  }
+  void ReportPost() async
+  {
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? "";
+      API_Group.ReportPost(postid.value,token);
     }
     finally
     {

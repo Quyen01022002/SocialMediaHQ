@@ -60,6 +60,7 @@ class _DashBoardState extends State<DashBoard> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: SafeArea(
         child: BottomAppBar(
+          color: Colors.white,
           shape: CircularNotchedRectangle(),
           notchMargin: 10,
           child: Container(
@@ -164,6 +165,7 @@ class _DashBoardState extends State<DashBoard> {
                           Text(
                             "Notification",
                             style: TextStyle(
+                              fontSize: 12,
                               color:
                                   currentTab == 2 ? Colors.blue : Colors.grey,
                             ),

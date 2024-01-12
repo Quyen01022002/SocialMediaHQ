@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socialmediahq/component/Post/create_post.dart';
@@ -14,6 +15,8 @@ import 'package:socialmediahq/view/Group/group_screen.dart';
 import '../../component/Post/Home_Post.dart';
 import '../../component/Post/create_post_Group.dart';
 import '../../model/GroupModel.dart';
+import 'ApprovalItem.dart';
+import 'DisplayBackGroudGroup.dart';
 
 class HomeGroup extends StatefulWidget {
   const HomeGroup({super.key});
@@ -123,9 +126,15 @@ class _HomeGroupState extends State<HomeGroup>
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
-                  background: Image.asset(
-                    'assets/images/backgroud_profile_page.png',
-                    fit: BoxFit.cover,
+                  background: GestureDetector(
+                    onTap: (){
+                        print(homeGroupController.group_id.value);
+                        _pickImage(context, ImageSource.gallery, homeGroupController.group_id.value);
+                    },
+                    child: Image.asset(
+                      'assets/images/backgroud_profile_page.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   titlePadding: EdgeInsets.only(left: 20, bottom: 20),
                 );
@@ -281,27 +290,27 @@ class _HomeGroupState extends State<HomeGroup>
                   padding: EdgeInsets.only(left: 20),
                   child: Row(
                     children: [
-                      // Align(
-                      //   child: Container(
-                      //     child: ElevatedButton(
-                      //       onPressed: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(builder: (context) => ListMemberGroup()),
-                      //         );
-                      //
-                      //       },
-                      //       style: ElevatedButton.styleFrom(
-                      //
-                      //         backgroundColor: Color(0xFF8587F1),
-                      //       ),
-                      //       child: Padding(
-                      //         padding: const EdgeInsets.fromLTRB(10,10,10,10),
-                      //         child: Text('Quản lý'),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      Align(
+                        child: Container(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => GroupManagementPage()),
+                              );
+
+                            },
+                            style: ElevatedButton.styleFrom(
+
+                              backgroundColor: Color(0xFF8587F1),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10,10,10,10),
+                              child: Text('Quản lý',style: TextStyle(color: Colors.white,),),
+                            ),
+                          ),
+                        ),
+                      ),
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Container(
@@ -316,7 +325,7 @@ class _HomeGroupState extends State<HomeGroup>
                             child: Padding(
                               padding:
                                   const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                              child: Text('Thêm thành viên'),
+                              child: Text('Thêm thành viên',style: TextStyle(color: Colors.white,),),
                             ),
                           ),
                         ),
@@ -363,20 +372,6 @@ class _HomeGroupState extends State<HomeGroup>
                                   border: InputBorder.none,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                // Handle post button click
-
-                                // Add logic to post the content to your backend or perform other actions
-                              },
-                              child: Text("Đăng"),
                             ),
                           ],
                         ),
@@ -593,3 +588,17 @@ class _HomeGroupState extends State<HomeGroup>
     );
   }
 }
+void _pickImage(BuildContext context, ImageSource source,int groupId) async {
+  XFile? pickedImage = await ImagePicker().pickImage(source: source);
+
+  if (pickedImage != null) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            DisplayBackGroudGroup(imagePath: pickedImage.path,groupId: groupId),
+      ),
+    );
+  }
+}
+

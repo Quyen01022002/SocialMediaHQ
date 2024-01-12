@@ -158,7 +158,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         myController.checkotp(context);
                       },
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(120, 18, 125, 18),
+                        padding: const EdgeInsets.fromLTRB(110, 18, 120, 18),
                         child: Text(
                           'VERIFY',
                           style: TextStyle(
